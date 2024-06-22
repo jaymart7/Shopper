@@ -10,7 +10,7 @@ interface SessionRepository {
     fun clearSession()
 }
 
-class SessionRepositoryImpl() : SessionRepository {
+internal class SessionRepositoryImpl : SessionRepository {
 
     override fun setToken(token: String) {
 //        sessionStorage[TOKEN] = token

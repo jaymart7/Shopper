@@ -22,9 +22,9 @@ interface Home {
     fun logout()
 }
 
-class HomeImpl(
+internal class HomeImpl(
     private val accountRepository: AccountRepository,
-    private val screenNavigator: ScreenNavigatorImpl,
+    private val screenNavigator: ScreenNavigator,
     private val scope: CoroutineScope
 ) : Home {
 

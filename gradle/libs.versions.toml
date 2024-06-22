@@ -14,12 +14,19 @@ compose-plugin = "1.6.10"
 junit = "4.13.2"
 kotlin = "2.0.0"
 ktor = "3.0.0-wasm2"
+lifecycleViewmodel = "2.8.2"
 logback = "1.5.6"
 kotlinx-serialization = "1.6.3"
 coroutines = "1.8.1"
 slf4j = "2.0.13"
 
+koin-android = "3.6.0-Beta4"
+koin-android-compose = "3.6.0-Beta4"
+koin-compose-multiplatform = "1.2.0-alpha3"
+koin-core = "3.6.0-alpha3"
+
 [libraries]
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycleViewmodel" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -58,6 +65,14 @@ ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-json = { module = "io.ktor:ktor-client-json", version.ref = "ktor" }
 ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android" }
+koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koin-android" }
+koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-android-compose" }
+koin-compose-multiplatform = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose-multiplatform" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-core" }
+koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin-core" }
+koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin-core" }
 
 [bundles]
 ktor-common = [

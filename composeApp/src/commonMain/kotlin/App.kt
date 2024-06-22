@@ -14,39 +14,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import common.Home
-import common.HomeImpl
 import common.Login
-import common.LoginImpl
 import common.Screen
 import common.ScreenNavigator
-import common.ScreenNavigatorImpl
+import di.initKoin
+import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import repository.AccountRepositoryImpl
-import repository.SessionRepositoryImpl
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 @Composable
 @Preview
 fun App() {
+    initKoin()
+
     MaterialTheme {
-        val scope = rememberCoroutineScope()
-        val sessionRepository = SessionRepositoryImpl()
-        val accountRepository = AccountRepositoryImpl(
-            sessionRepository = sessionRepository
-        )
-        val screenNavigator = ScreenNavigatorImpl(
-            accountRepository = accountRepository,
-            scope = scope
-        )
-        val login = LoginImpl(
-            accountRepository = accountRepository,
-            screenNavigator = screenNavigator,
-            scope = scope
-        )
-        val home = HomeImpl(
-            accountRepository = accountRepository,
-            screenNavigator = screenNavigator,
-            scope = scope
-        )
+        val scope: CoroutineScope = rememberCoroutineScope()
+        val screenNavigator = koinInject<ScreenNavigator> { parametersOf(scope) }
+        val login = koinInject<Login> { parametersOf(scope) }
+        val home = koinInject<Home> { parametersOf(scope) }
 
         MainScreen(
             screenNavigator = screenNavigator,

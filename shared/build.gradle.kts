@@ -42,6 +42,11 @@ kotlin {
             // put your Multiplatform dependencies here
             implementation(libs.bundles.ktor.common)
             implementation(libs.kotlinx.coroutines.core)
+
+            api(libs.koin.core)
+            api(libs.koin.compose.multiplatform)
+
+            implementation(libs.androidx.lifecycle.viewmodel)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)

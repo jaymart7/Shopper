@@ -26,10 +26,10 @@ interface Login {
     )
 }
 
-class LoginImpl(
+internal class LoginImpl(
     private val accountRepository: AccountRepository,
     private val screenNavigator: ScreenNavigator,
-    private val scope: CoroutineScope
+    val scope: CoroutineScope
 ) : Login {
 
     private val _state: MutableStateFlow<Login.State> = MutableStateFlow(Login.State())

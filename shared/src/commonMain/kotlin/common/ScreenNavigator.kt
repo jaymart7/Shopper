@@ -19,9 +19,9 @@ interface ScreenNavigator {
     )
 }
 
-class ScreenNavigatorImpl(
+internal class ScreenNavigatorImpl(
     private val accountRepository: AccountRepository,
-    private val scope: CoroutineScope
+    val scope: CoroutineScope
 ) : ScreenNavigator {
 
     private val _state = MutableStateFlow(ScreenNavigator.State())
