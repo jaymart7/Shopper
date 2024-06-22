@@ -17,11 +17,6 @@ import io.ktor.server.response.respond
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.main() {
-    install(CORS) {
-        anyHost()
-        allowHeader(HttpHeaders.ContentType)
-    }
-
     val secret = environment.config.property("jwt.secret").getString()
     val issuer = environment.config.property("jwt.issuer").getString()
     val audience = environment.config.property("jwt.audience").getString()
@@ -49,6 +44,11 @@ fun Application.main() {
             }
         }
 
+    }
+    install(CORS) {
+        anyHost()
+        allowHeaders { true }
+        allowHeader(HttpHeaders.ContentType)
     }
 
     configureRouting()

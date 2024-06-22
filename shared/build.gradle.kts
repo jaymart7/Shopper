@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.androidLibrary)
 }
 
@@ -47,6 +48,7 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
+            implementation(libs.slf4j)
         }
         jsMain.dependencies {
             implementation(libs.ktor.client.js)
