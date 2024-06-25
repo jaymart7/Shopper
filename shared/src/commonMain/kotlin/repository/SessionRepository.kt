@@ -1,5 +1,6 @@
 package repository
 
+import ph.mart.shopper.db.ShopperDatabase
 
 interface SessionRepository {
 
@@ -10,19 +11,21 @@ interface SessionRepository {
     fun clearSession()
 }
 
-internal class SessionRepositoryImpl : SessionRepository {
+internal class SessionRepositoryImpl(
+    shopperDatabase: ShopperDatabase
+) : SessionRepository {
+
+    private val queries = shopperDatabase.shopperDatabaseQueries
 
     override fun setToken(token: String) {
-//        sessionStorage[TOKEN] = token
+        queries.insertItem(token)
     }
 
-    override fun getToken(): String? = "sd"
+    override fun getToken(): String? {
+        return queries.selectAll().executeAsOneOrNull()?.token
+    }
 
     override fun clearSession() {
-//        sessionStorage.clear()
-    }
-
-    companion object {
-        const val TOKEN = "token"
+        queries.deleteAll()
     }
 }

@@ -52,6 +52,7 @@ internal class HomeImpl(
     }
 
     override fun logout() {
+        accountRepository.logout()
         screenNavigator.updateScreen(Screen.LOGIN)
     }
 }

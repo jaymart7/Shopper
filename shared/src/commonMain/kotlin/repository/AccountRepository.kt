@@ -1,5 +1,8 @@
 package repository
 
+import di.json
+import di.url
+import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -11,9 +14,6 @@ import io.ktor.http.contentType
 import model.request.LoginRequest
 import model.response.AccountResponse
 import model.response.TokenResponse
-import network.httpClient
-import network.json
-import network.url
 
 interface AccountRepository {
 
@@ -23,11 +23,12 @@ interface AccountRepository {
 
     fun logout()
 
-    fun hasToken(): Boolean
+    suspend fun hasToken(): Boolean
 }
 
 class AccountRepositoryImpl(
-    private val sessionRepository: SessionRepository
+    private val sessionRepository: SessionRepository,
+    private val httpClient: HttpClient
 ) : AccountRepository {
 
     override suspend fun login(
@@ -56,6 +57,8 @@ class AccountRepositoryImpl(
         sessionRepository.clearSession()
     }
 
-    override fun hasToken(): Boolean = sessionRepository.getToken().isNullOrBlank().not()
+    override suspend fun hasToken(): Boolean {
+        return sessionRepository.getToken() != null
+    }
 
 }

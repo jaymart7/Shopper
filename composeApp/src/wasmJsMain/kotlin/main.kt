@@ -4,6 +4,9 @@ import kotlinx.browser.document
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
+    startKoin {
+        modules(appModule())
+    }
     ComposeViewport(document.body!!) {
         App()
     }

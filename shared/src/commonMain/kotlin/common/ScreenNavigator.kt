@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import repository.AccountRepository
 
-
 interface ScreenNavigator {
 
     val state: StateFlow<State>
@@ -28,17 +27,17 @@ internal class ScreenNavigatorImpl(
     override val state: StateFlow<ScreenNavigator.State> = _state
 
     init {
-        if (accountRepository.hasToken()) {
-            scope.launch {
+        scope.launch {
+            if (accountRepository.hasToken()) {
                 try {
                     accountRepository.getAccount()
                     _state.update { it.copy(screen = Screen.HOME) }
                 } catch (e: Exception) {
                     _state.update { it.copy(screen = Screen.LOGIN) }
                 }
+            } else {
+                _state.update { it.copy(screen = Screen.LOGIN) }
             }
-        } else {
-            _state.update { it.copy(screen = Screen.LOGIN) }
         }
     }
 

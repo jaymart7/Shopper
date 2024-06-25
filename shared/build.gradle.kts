@@ -7,10 +7,11 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
-    @OptIn(ExperimentalWasmDsl::class)
+    /*@OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser {
             commonWebpackConfig {
@@ -22,7 +23,7 @@ kotlin {
                 }
             }
         }
-    }
+    }*/
     
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -39,27 +40,35 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
             implementation(libs.bundles.ktor.common)
             implementation(libs.kotlinx.coroutines.core)
 
             api(libs.koin.core)
             api(libs.koin.compose.multiplatform)
 
-            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.coroutines.extensions)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.sqldelight.android.driver)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
             implementation(libs.slf4j)
+            implementation(libs.sqldelight.sqlite.driver)
         }
-        jsMain.dependencies {
+        /*jsMain.dependencies {
             implementation(libs.ktor.client.js)
-        }
+
+            implementation(libs.sqljs.driver)
+            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.0.2"))
+            implementation(npm("sql.js", "1.6.2"))
+            implementation(devNpm("copy-webpack-plugin", "9.1.0"))
+        }*/
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.sqldelight.native.driver)
         }
     }
 }
@@ -73,5 +82,13 @@ android {
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+}
+
+sqldelight {
+    databases {
+        create("ShopperDatabase") {
+            packageName.set("ph.mart.shopper.db")
+        }
     }
 }

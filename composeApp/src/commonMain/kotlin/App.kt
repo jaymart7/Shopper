@@ -6,6 +6,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -17,7 +18,6 @@ import common.Home
 import common.Login
 import common.Screen
 import common.ScreenNavigator
-import di.initKoin
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
@@ -26,8 +26,6 @@ import org.koin.core.parameter.parametersOf
 @Composable
 @Preview
 fun App() {
-    initKoin()
-
     MaterialTheme {
         val scope: CoroutineScope = rememberCoroutineScope()
         val screenNavigator = koinInject<ScreenNavigator> { parametersOf(scope) }
@@ -58,7 +56,9 @@ private fun MainScreen(
             )
 
             Screen.LOGIN -> LoginScreen(login)
-            Screen.HOME -> HomeScreen(home)
+            Screen.HOME -> {
+                HomeScreen(home)
+            }
         }
     }
 }
@@ -125,12 +125,17 @@ private fun HomeScreen(
     home: Home,
     modifier: Modifier = Modifier
 ) {
+    val state by home.state.collectAsState()
+    LaunchedEffect(true) {
+        home.loadAccount()
+    }
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
     ) {
-        Text("Home Screen")
+        Text("Home Screen: ${state.accountResponse?.name}")
         Button(
             onClick = home::logout,
             content = {
