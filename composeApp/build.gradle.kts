@@ -69,6 +69,7 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.ui.tooling.preview)
         }
     }
 }

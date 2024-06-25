@@ -1,6 +1,7 @@
 package common
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -41,6 +42,7 @@ internal class LoginImpl(
             try {
                 accountRepository.login(_state.value.username, _state.value.password)
                 screenNavigator.updateScreen(Screen.HOME)
+                _state.update { Login.State() }
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
@@ -70,5 +72,4 @@ internal class LoginImpl(
             )
         }
     }
-
 }
