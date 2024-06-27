@@ -23,7 +23,7 @@ interface AccountRepository {
 
     fun logout()
 
-    suspend fun hasToken(): Boolean
+    fun hasToken(): Boolean
 }
 
 class AccountRepositoryImpl(
@@ -57,7 +57,7 @@ class AccountRepositoryImpl(
         sessionRepository.clearSession()
     }
 
-    override suspend fun hasToken(): Boolean {
+    override fun hasToken(): Boolean {
         return sessionRepository.getToken() != null
     }
 

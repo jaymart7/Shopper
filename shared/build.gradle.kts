@@ -45,15 +45,21 @@ kotlin {
 
             api(libs.koin.core)
             api(libs.koin.compose.multiplatform)
+            api(libs.kotlin.serialization)
 
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines.extensions)
+
+            api(libs.decompose.decompose)
+            api(libs.decompose.extensions.compose)
+            implementation(libs.essenty.lifecycle.coroutines)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android.driver)
         }
         jvmMain.dependencies {
+            implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.cio)
             implementation(libs.slf4j)
             implementation(libs.sqldelight.sqlite.driver)

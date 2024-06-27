@@ -4,32 +4,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import common.Home
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import component.HomeComponent
 
 @Composable
 internal fun HomeScreen(
-    home: Home,
+    component: HomeComponent,
     modifier: Modifier = Modifier
 ) {
-    val state by home.state.collectAsState()
-    LaunchedEffect(true) {
-        home.loadAccount()
-    }
+    val model by component.model.subscribeAsState()
 
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
     ) {
-        Text("Home Screen: ${state.accountResponse?.name}")
+        Text("Home Screen: ${model.name}")
         Button(
-            onClick = home::logout,
+            onClick = component::logout,
             content = {
                 Text("Logout")
             }

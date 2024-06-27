@@ -1,11 +1,5 @@
 package di
 
-import common.Home
-import common.HomeImpl
-import common.Login
-import common.LoginImpl
-import common.ScreenNavigator
-import common.ScreenNavigatorImpl
 import org.koin.dsl.module
 import ph.mart.shopper.db.ShopperDatabase
 import platformModule
@@ -27,29 +21,6 @@ val commonModule = module {
         AccountRepositoryImpl(
             sessionRepository = get(),
             httpClient = get()
-        )
-    }
-
-    single<Login> { params ->
-        LoginImpl(
-            accountRepository = get(),
-            screenNavigator = get(),
-            scope = params.get()
-        )
-    }
-
-    single<ScreenNavigator> { params ->
-        ScreenNavigatorImpl(
-            accountRepository = get(),
-            scope = params.get()
-        )
-    }
-
-    single<Home> { params ->
-        HomeImpl(
-            accountRepository = get(),
-            screenNavigator = get(),
-            scope = params.get()
         )
     }
 

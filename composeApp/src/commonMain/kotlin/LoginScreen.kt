@@ -7,41 +7,40 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import common.ButtonWithLoading
-import common.Login
+import component.LoginComponent
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 internal fun LoginScreen(
-    login: Login,
+    component: LoginComponent,
     modifier: Modifier = Modifier
 ) {
-    val state by login.state.collectAsState()
+    val model by component.model.subscribeAsState()
 
     LoginScreen(
-        onUsernameChanged = login::onUsernameChanged,
-        onPasswordChanged = login::onPasswordChanged,
-        onLogin = login::login,
-        state = state,
+        onUpdateUsername = component::onUpdateUsername,
+        onUpdatePassword = component::onUpdatePassword,
+        onLogin = component::login,
+        model = model,
         modifier = modifier
     )
 }
 
 @Composable
 private fun LoginScreen(
-    onUsernameChanged: (String) -> Unit,
-    onPasswordChanged: (String) -> Unit,
+    onUpdateUsername: (String) -> Unit,
+    onUpdatePassword: (String) -> Unit,
     onLogin: () -> Unit,
-    state: Login.State,
+    model: LoginComponent.Model,
     modifier: Modifier = Modifier
 ) {
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -56,29 +55,29 @@ private fun LoginScreen(
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = state.username,
-            enabled = state.isLoading.not(),
-            onValueChange = onUsernameChanged,
+            value = model.username,
+            enabled = model.isLoading.not(),
+            onValueChange = onUpdateUsername,
             label = { Text("Username") }
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = state.password,
-            enabled = state.isLoading.not(),
-            onValueChange = onPasswordChanged,
+            value = model.password,
+            enabled = model.isLoading.not(),
+            onValueChange = onUpdatePassword,
             label = { Text("Password") }
         )
 
         ButtonWithLoading(
             modifier = Modifier.fillMaxWidth(),
             onClick = onLogin,
-            enabled = state.isLoginEnabled,
-            isLoading = state.isLoading,
+            enabled = model.isLoginEnabled,
+            isLoading = model.isLoading,
             content = { Text("Login") }
         )
 
-        Text(state.loginError.orEmpty(), color = Color.Red)
+        Text(model.loginError.orEmpty(), color = Color.Red)
     }
 }
 
@@ -86,9 +85,9 @@ private fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(
-        onUsernameChanged = {},
-        onPasswordChanged = {},
+        onUpdateUsername = {},
+        onUpdatePassword = {},
         onLogin = {},
-        state = Login.State(isLoading = true)
+        model = LoginComponent.Model()
     )
 }
