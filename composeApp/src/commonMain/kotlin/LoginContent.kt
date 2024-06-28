@@ -18,13 +18,13 @@ import component.LoginComponent
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-internal fun LoginScreen(
+internal fun LoginContent(
     component: LoginComponent,
     modifier: Modifier = Modifier
 ) {
     val model by component.model.subscribeAsState()
 
-    LoginScreen(
+    LoginContent(
         onUpdateUsername = component::onUpdateUsername,
         onUpdatePassword = component::onUpdatePassword,
         onLogin = component::login,
@@ -34,7 +34,7 @@ internal fun LoginScreen(
 }
 
 @Composable
-private fun LoginScreen(
+private fun LoginContent(
     onUpdateUsername: (String) -> Unit,
     onUpdatePassword: (String) -> Unit,
     onLogin: () -> Unit,
@@ -84,7 +84,7 @@ private fun LoginScreen(
 @Preview
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(
+    LoginContent(
         onUpdateUsername = {},
         onUpdatePassword = {},
         onLogin = {},

@@ -1,11 +1,11 @@
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import di.appModule
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import component.DefaultRootComponent
+import di.appModule
 import org.koin.core.context.startKoin
 
 fun main() = application {
@@ -35,6 +35,12 @@ fun main() = application {
 
 @Preview
 @Composable
-private fun AppPreview() {
+private fun LoginPreview() {
     LoginScreenPreview()
+}
+
+@Preview
+@Composable
+private fun HomePreview() {
+    HomeScreenPreview()
 }

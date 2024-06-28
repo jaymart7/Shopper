@@ -1,5 +1,6 @@
 package ph.mart.shopper
 
+import HomeScreenPreview
 import LoginScreenPreview
 import RootContent
 import android.os.Bundle
@@ -26,10 +27,20 @@ class MainActivity : ComponentActivity() {
 
 @Preview
 @Composable
-fun AppAndroidPreview() {
+fun LoginPreview() {
     MaterialTheme {
         Surface {
             LoginScreenPreview()
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomePreview() {
+    MaterialTheme {
+        Surface {
+            HomeScreenPreview()
         }
     }
 }

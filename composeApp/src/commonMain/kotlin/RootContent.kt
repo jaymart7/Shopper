@@ -27,8 +27,8 @@ fun RootContent(
                 animation = stackAnimation(fade() + scale())
             ) {
                 when (val instance = it.instance) {
-                    is Child.Login -> LoginScreen(component = instance.component)
-                    is Child.Home -> HomeScreen(component = instance.component)
+                    is Child.Login -> LoginContent(component = instance.component)
+                    is Child.Home -> HomeContent(component = instance.component)
                 }
             }
         }

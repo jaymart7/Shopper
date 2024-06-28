@@ -11,6 +11,8 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import model.mapper.toAccount
+import model.presentation.Account
 import model.request.LoginRequest
 import model.response.AccountResponse
 import model.response.TokenResponse
@@ -19,7 +21,7 @@ interface AccountRepository {
 
     suspend fun login(username: String, password: String)
 
-    suspend fun getAccount(): AccountResponse
+    suspend fun getAccount(): Account
 
     fun logout()
 
@@ -43,14 +45,15 @@ class AccountRepositoryImpl(
         sessionRepository.setToken(token)
     }
 
-    override suspend fun getAccount(): AccountResponse {
+    override suspend fun getAccount(): Account {
         val token = sessionRepository.getToken()
         val response = httpClient.get("$url/account") {
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer $token")
         }
 
-        return json.decodeFromString(response.bodyAsText())
+        val accountResponse = json.decodeFromString<AccountResponse>(response.bodyAsText())
+        return accountResponse.toAccount()
     }
 
     override fun logout() {
@@ -60,5 +63,4 @@ class AccountRepositoryImpl(
     override fun hasToken(): Boolean {
         return sessionRepository.getToken() != null
     }
-
 }

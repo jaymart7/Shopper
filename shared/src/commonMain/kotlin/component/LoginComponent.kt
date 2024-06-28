@@ -1,6 +1,5 @@
 package component
 
-import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
@@ -33,7 +32,6 @@ interface LoginComponent {
 }
 
 internal class DefaultLoginComponent(
-    private val componentContext: ComponentContext,
     private val onLoggedIn: () -> Unit,
     context: CoroutineContext = Dispatchers.Main.immediate
 ) : LoginComponent, KoinComponent {

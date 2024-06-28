@@ -52,19 +52,17 @@ class DefaultRootComponent(
         config: Config,
         childComponentContext: ComponentContext
     ): Child = when (config) {
-        is Config.Login -> Login(loginComponent(childComponentContext))
-        is Config.Home -> Home(homeComponent(childComponentContext))
+        is Config.Login -> Login(loginComponent())
+        is Config.Home -> Home(homeComponent())
     }
 
-    private fun loginComponent(componentContext: ComponentContext): LoginComponent =
+    private fun loginComponent(): LoginComponent =
         DefaultLoginComponent(
-            componentContext = componentContext,
             onLoggedIn = { navigation.replaceAll(Config.Home) },
         )
 
-    private fun homeComponent(componentContext: ComponentContext): HomeComponent =
+    private fun homeComponent(): HomeComponent =
         DefaultHomeComponent(
-            componentContext = componentContext,
             onFinished = { navigation.replaceAll(Config.Login) },
         )
 
