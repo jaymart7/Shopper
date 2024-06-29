@@ -14,7 +14,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import component.HomeComponent
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import shopper.composeapp.generated.resources.Res
+import shopper.composeapp.generated.resources.login
+import shopper.composeapp.generated.resources.logout
 import util.ViewState
 
 @Composable
@@ -53,7 +57,7 @@ private fun HomeContent(
                 Button(
                     onClick = onRefresh,
                     content = {
-                        Text("Refresh")
+                        Text(stringResource(Res.string.login))
                     }
                 )
             }
@@ -65,7 +69,7 @@ private fun HomeContent(
         Button(
             onClick = onLogout,
             content = {
-                Text("Logout")
+                Text(stringResource(Res.string.logout))
             }
         )
     }

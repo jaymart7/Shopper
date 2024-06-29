@@ -15,7 +15,12 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import common.ButtonWithLoading
 import component.LoginComponent
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import shopper.composeapp.generated.resources.Res
+import shopper.composeapp.generated.resources.login
+import shopper.composeapp.generated.resources.password
+import shopper.composeapp.generated.resources.username
 
 @Composable
 internal fun LoginContent(
@@ -49,7 +54,7 @@ private fun LoginContent(
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {
         Text(
-            text = "Login",
+            text = stringResource(Res.string.login),
             style = MaterialTheme.typography.h6
         )
 
@@ -58,7 +63,7 @@ private fun LoginContent(
             value = model.username,
             enabled = model.isLoading.not(),
             onValueChange = onUpdateUsername,
-            label = { Text("Username") }
+            label = { Text(stringResource(Res.string.username)) }
         )
 
         TextField(
@@ -66,7 +71,7 @@ private fun LoginContent(
             value = model.password,
             enabled = model.isLoading.not(),
             onValueChange = onUpdatePassword,
-            label = { Text("Password") }
+            label = { Text(stringResource(Res.string.password)) }
         )
 
         ButtonWithLoading(
@@ -74,7 +79,7 @@ private fun LoginContent(
             onClick = onLogin,
             enabled = model.isLoginEnabled,
             isLoading = model.isLoading,
-            content = { Text("Login") }
+            content = { Text(stringResource(Res.string.login)) }
         )
 
         Text(model.loginError.orEmpty(), color = Color.Red)

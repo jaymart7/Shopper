@@ -18,12 +18,11 @@ fun main() = application {
     val lifecycle = LifecycleRegistry()
 
     // Always create the root component outside Compose on the UI thread
-    val root =
-        runOnUiThread {
-            DefaultRootComponent(
-                componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            )
-        }
+    val root = runOnUiThread {
+        DefaultRootComponent(
+            componentContext = DefaultComponentContext(lifecycle = lifecycle),
+        )
+    }
 
     Window(
         onCloseRequest = ::exitApplication,
