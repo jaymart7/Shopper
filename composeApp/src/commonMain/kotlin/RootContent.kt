@@ -29,6 +29,7 @@ fun RootContent(
                 when (val instance = it.instance) {
                     is Child.Login -> LoginContent(component = instance.component)
                     is Child.Home -> HomeContent(component = instance.component)
+                    is Child.ProductDetails -> ProductDetailsContent(component = instance.component)
                 }
             }
         }

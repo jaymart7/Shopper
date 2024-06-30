@@ -1,10 +1,18 @@
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,11 +22,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import component.HomeComponent
-import org.jetbrains.compose.resources.stringResource
+import component.HomeEvent
+import model.Product
+import model.presentation.Account
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import shopper.composeapp.generated.resources.Res
-import shopper.composeapp.generated.resources.login
-import shopper.composeapp.generated.resources.logout
 import util.ViewState
 
 @Composable
@@ -29,8 +36,7 @@ internal fun HomeContent(
     val model by component.model.subscribeAsState()
 
     HomeContent(
-        onRefresh = component::refreshAccount,
-        onLogout = component::logout,
+        onEvent = { component.handleEvent(it) },
         model = model,
         modifier = modifier
     )
@@ -38,49 +44,162 @@ internal fun HomeContent(
 
 @Composable
 private fun HomeContent(
-    onRefresh: () -> Unit,
-    onLogout: () -> Unit,
+    onEvent: (HomeEvent) -> Unit,
     model: HomeComponent.Model,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterVertically)
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        when (val accountState = model.accountState) {
-            is ViewState.Error -> Column {
-                Text(
-                    accountState.error.message.orEmpty(),
-                    textAlign = TextAlign.Center
-                )
-                Button(
-                    onClick = onRefresh,
-                    content = {
-                        Text(stringResource(Res.string.login))
-                    }
-                )
-            }
-            is ViewState.Loading -> CircularProgressIndicator()
-            is ViewState.Success -> Text(accountState.data.name)
-        }
+        AccountContent(
+            onRefresh = { onEvent(HomeEvent.RefreshAccount) },
+            onLogout = { onEvent(HomeEvent.Logout) },
+            accountState = model.accountState
+        )
 
-        Divider(modifier = Modifier.padding(vertical = 16.dp))
-        Button(
-            onClick = onLogout,
-            content = {
-                Text(stringResource(Res.string.logout))
-            }
+        Divider()
+
+        ProductContent(
+            onItemClick = { onEvent(HomeEvent.ProductClick(it)) },
+            onRefresh = { onEvent(HomeEvent.RefreshProduct) },
+            productsState = model.productsState,
+            modifier = Modifier.weight(1f)
         )
     }
 }
 
 @Composable
+private fun AccountContent(
+    onRefresh: () -> Unit,
+    onLogout: () -> Unit,
+    accountState: ViewState<Account>,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
+        when (accountState) {
+            is ViewState.Error -> {
+                Text(
+                    accountState.error.message.orEmpty(),
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
+                )
+
+                Button(
+                    onClick = onRefresh,
+                    content = {
+                        Text("Refresh")
+                    }
+                )
+            }
+
+            is ViewState.Loading -> CircularProgressIndicator()
+
+            is ViewState.Success -> {
+                Text(
+                    text = accountState.data.name,
+                    maxLines = 1
+                )
+
+                OutlinedButton(
+                    onClick = onLogout,
+                    content = {
+                        Text("Logout")
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ProductContent(
+    onItemClick: (Product) -> Unit,
+    onRefresh: () -> Unit,
+    productsState: ViewState<List<Product>>,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        when (productsState) {
+            is ViewState.Error -> {
+                Text(
+                    productsState.error.message.orEmpty(),
+                    textAlign = TextAlign.Center
+                )
+                Button(
+                    onClick = onRefresh,
+                    content = {
+                        Text("Refresh")
+                    }
+                )
+            }
+
+            is ViewState.Loading -> CircularProgressIndicator()
+
+            is ViewState.Success -> {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    items(
+                        productsState.data,
+                        key = { it.id },
+                        itemContent = {
+                            ProductItem(
+                                onClick = { onItemClick(it) },
+                                product = it
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProductItem(
+    onClick: () -> Unit,
+    product: Product,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            }
+    ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            Text(product.title)
+        }
+    }
+}
+
+
+@Composable
 @Preview
 fun HomeScreenPreview() {
+    val account = Account(name = "Name", username = "user name")
+
     HomeContent(
-        onRefresh = {},
-        onLogout = {},
-        model = HomeComponent.Model()
+        onEvent = {},
+        model = HomeComponent.Model(
+            accountState = ViewState.Success(account),
+            productsState = ViewState.Success(
+                listOf(
+                    Product(1, "Product 1"),
+                    Product(2, "Product 2"),
+                    Product(3, "Product 3")
+                )
+            )
+        )
     )
 }

@@ -5,12 +5,15 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.popTo
+import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import component.RootComponent.Child
 import component.RootComponent.Child.Home
 import component.RootComponent.Child.Login
+import component.RootComponent.Child.ProductDetails
 import kotlinx.serialization.Serializable
+import model.Product
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.AccountRepository
@@ -24,6 +27,9 @@ interface RootComponent {
     sealed class Child {
         class Login(val component: LoginComponent) : Child()
         class Home(val component: HomeComponent) : Child()
+        class ProductDetails(
+            val component: ProductDetailsComponent
+        ) : Child()
     }
 }
 
@@ -53,7 +59,12 @@ class DefaultRootComponent(
         childComponentContext: ComponentContext
     ): Child = when (config) {
         is Config.Login -> Login(loginComponent())
+
         is Config.Home -> Home(homeComponent())
+
+        is Config.ProductDetails -> ProductDetails(
+            component = productComponent(config.product)
+        )
     }
 
     private fun loginComponent(): LoginComponent =
@@ -63,7 +74,13 @@ class DefaultRootComponent(
 
     private fun homeComponent(): HomeComponent =
         DefaultHomeComponent(
-            onFinished = { navigation.replaceAll(Config.Login) },
+            onLogout = { navigation.replaceAll(Config.Login) },
+            onProductClick = { navigation.push(Config.ProductDetails(it)) }
+        )
+
+    private fun productComponent(product: Product): ProductDetailsComponent =
+        DefaultProductDetailsComponent(
+            product = product
         )
 
     override fun onBackClicked(toIndex: Int) {
@@ -77,5 +94,8 @@ class DefaultRootComponent(
 
         @Serializable
         data object Home : Config
+
+        @Serializable
+        data class ProductDetails(val product: Product) : Config
     }
 }

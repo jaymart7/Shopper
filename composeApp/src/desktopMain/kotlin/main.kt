@@ -34,12 +34,6 @@ fun main() = application {
 
 @Preview
 @Composable
-private fun LoginPreview() {
-    LoginScreenPreview()
-}
-
-@Preview
-@Composable
 private fun HomePreview() {
     HomeScreenPreview()
 }
