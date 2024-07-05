@@ -3,8 +3,9 @@ package component
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.backStack
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.popTo
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
@@ -22,7 +23,10 @@ interface RootComponent {
 
     val stack: Value<ChildStack<*, Child>>
 
-    fun onBackClicked(toIndex: Int)
+    val hasBackStack: Boolean
+        get() = stack.backStack.isNotEmpty()
+
+    fun onBackClicked()
 
     sealed class Child {
         class Login(val component: LoginComponent) : Child()
@@ -83,8 +87,8 @@ class DefaultRootComponent(
             product = product
         )
 
-    override fun onBackClicked(toIndex: Int) {
-        navigation.popTo(index = toIndex)
+    override fun onBackClicked() {
+        navigation.pop()
     }
 
     @Serializable
