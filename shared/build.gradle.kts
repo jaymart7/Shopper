@@ -42,6 +42,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.bundles.ktor.common)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.napier)
 
             api(libs.koin.core)
             api(libs.koin.compose.multiplatform)

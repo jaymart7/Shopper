@@ -1,11 +1,12 @@
 package di
 
 import getPlatform
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -27,7 +28,8 @@ val networkModule = module {
             HttpResponseValidator {
                 handleResponseExceptionWithRequest { exception, request ->
                     val clientException =
-                        exception as? ClientRequestException ?: return@handleResponseExceptionWithRequest
+                        exception as? ClientRequestException
+                            ?: return@handleResponseExceptionWithRequest
                     val exceptionResponse = exception.response
                     val exceptionResponseText = exceptionResponse.bodyAsText()
                     throw Exception(exceptionResponseText)
@@ -37,9 +39,13 @@ val networkModule = module {
             install(ContentNegotiation) { json(Json) }
 
             install(Logging) {
-                logger = Logger.DEFAULT
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        Napier.v("HTTP Client", null, message)
+                    }
+                }
                 level = LogLevel.ALL
             }
-        }
+        }.also { Napier.base(DebugAntilog()) }
     }
 }

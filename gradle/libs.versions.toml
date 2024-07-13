@@ -23,6 +23,7 @@ sqlDelight = "2.0.2"
 decompose = "3.0.0"
 essenty = "2.1.0"
 compose = "1.6.11"
+napier = "2.7.1"
 
 koin-android = "3.6.0-Beta4"
 koin-android-compose = "3.6.0-Beta4"
@@ -35,6 +36,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 slf4j = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
