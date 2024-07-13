@@ -1,17 +1,14 @@
 package component
 
+import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import component.LoginComponent.Model
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.AccountRepository
-import kotlin.coroutines.CoroutineContext
 
 interface LoginComponent {
     val model: Value<Model>
@@ -32,11 +29,11 @@ interface LoginComponent {
 }
 
 internal class DefaultLoginComponent(
-    private val onLoggedIn: () -> Unit,
-    context: CoroutineContext = Dispatchers.Main.immediate
-) : LoginComponent, KoinComponent {
+    componentContext: ComponentContext,
+    private val onLoggedIn: () -> Unit
+) : ComponentContext by componentContext, LoginComponent, KoinComponent {
 
-    private val scope = CoroutineScope(context + SupervisorJob())
+    private val scope = componentCoroutineScope()
 
     private val accountRepository by inject<AccountRepository>()
 

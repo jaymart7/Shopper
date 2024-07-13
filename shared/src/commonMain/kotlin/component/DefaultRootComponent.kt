@@ -3,7 +3,7 @@ package component
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.backStack
+import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
@@ -22,9 +22,6 @@ import repository.AccountRepository
 interface RootComponent {
 
     val stack: Value<ChildStack<*, Child>>
-
-    val hasBackStack: Boolean
-        get() = stack.backStack.isNotEmpty()
 
     fun onBackClicked()
 
@@ -62,29 +59,44 @@ class DefaultRootComponent(
         config: Config,
         childComponentContext: ComponentContext
     ): Child = when (config) {
-        is Config.Login -> Login(loginComponent())
+        is Config.Login -> Login(loginComponent(childComponentContext))
 
-        is Config.Home -> Home(homeComponent())
+        is Config.Home -> Home(homeComponent(childComponentContext))
 
         is Config.ProductDetails -> ProductDetails(
-            component = productComponent(config.product)
+            productComponent(
+                componentContext = childComponentContext,
+                product = config.product
+            )
         )
     }
 
-    private fun loginComponent(): LoginComponent =
+    private fun loginComponent(
+        componentContext: ComponentContext
+    ): LoginComponent =
         DefaultLoginComponent(
+            componentContext = componentContext,
             onLoggedIn = { navigation.replaceAll(Config.Home) },
         )
 
-    private fun homeComponent(): HomeComponent =
+    private fun homeComponent(componentContext: ComponentContext): HomeComponent =
         DefaultHomeComponent(
+            componentContext = componentContext,
             onLogout = { navigation.replaceAll(Config.Login) },
             onProductClick = { navigation.push(Config.ProductDetails(it)) }
         )
 
-    private fun productComponent(product: Product): ProductDetailsComponent =
+    private fun productComponent(
+        componentContext: ComponentContext,
+        product: Product
+    ): ProductDetailsComponent =
         DefaultProductDetailsComponent(
-            product = product
+            componentContext = componentContext,
+            selectedProduct = product,
+            back = {
+                onBackClicked()
+                (stack.active.instance as? Home)?.component?.update()
+            }
         )
 
     override fun onBackClicked() {

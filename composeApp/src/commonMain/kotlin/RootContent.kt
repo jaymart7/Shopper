@@ -1,6 +1,6 @@
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
@@ -9,16 +9,22 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import component.RootComponent
 import component.RootComponent.Child
 
@@ -27,25 +33,34 @@ fun RootContent(
     component: RootComponent,
     modifier: Modifier = Modifier,
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val stack by component.stack.subscribeAsState()
+
     MaterialTheme {
         Surface(modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars)) {
-            Children(
-                stack = component.stack,
-                modifier = Modifier.fillMaxSize(),
-                animation = stackAnimation(fade() + scale())
-            ) {
-                Column {
+            Scaffold(
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+                modifier = modifier,
+                topBar = {
                     TopAppBar(
                         onBack = component::onBackClicked,
-                        hasBackStack = component.hasBackStack
+                        hasBackStack = stack.backStack.isNotEmpty()
                     )
-                    when (val instance = it.instance) {
-                        is Child.Login -> LoginContent(component = instance.component)
-                        is Child.Home -> HomeContent(component = instance.component)
-                        is Child.ProductDetails -> ProductDetailsContent(component = instance.component)
+                },
+                content = { innerPadding ->
+                    Children(
+                        stack = stack,
+                        modifier = Modifier.padding(innerPadding),
+                        animation = stackAnimation(fade() + scale())
+                    ) {
+                        when (val instance = it.instance) {
+                            is Child.Login -> LoginContent(component = instance.component)
+                            is Child.Home -> HomeContent(component = instance.component)
+                            is Child.ProductDetails -> ProductDetailsContent(instance.component)
+                        }
                     }
                 }
-            }
+            )
         }
     }
 }
@@ -73,6 +88,6 @@ private fun TopAppBar(
                     }
                 )
             }
-        },
+        }
     )
 }
