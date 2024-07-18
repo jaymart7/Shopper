@@ -24,15 +24,19 @@ interface ProductDetailsComponent {
 
 sealed class ProductDetailsEvent {
     data class UpdateTitle(val title: String) : ProductDetailsEvent()
-    data object Update : ProductDetailsEvent()
-    data object Delete : ProductDetailsEvent()
+    data object OnUpdate: ProductDetailsEvent()
+    data object OnDelete: ProductDetailsEvent()
+}
+
+sealed class ProductOperation {
+    data object Update: ProductOperation()
+    data object Delete: ProductOperation()
 }
 
 internal class DefaultProductDetailsComponent(
     componentContext: ComponentContext,
     selectedProduct: Product,
-    private val onUpdated: (Product) -> Unit,
-    private val onDeleted: (Int) -> Unit
+    private val onUpdated: (ProductOperation, Product) -> Unit
 ) : ComponentContext by componentContext, ProductDetailsComponent, KoinComponent {
 
     private val productRepository: ProductRepository by inject<ProductRepository>()
@@ -44,9 +48,9 @@ internal class DefaultProductDetailsComponent(
 
     override fun handleEvent(event: ProductDetailsEvent) {
         when (event) {
-            ProductDetailsEvent.Update -> save()
             is ProductDetailsEvent.UpdateTitle -> updateTitle(event.title)
-            is ProductDetailsEvent.Delete -> delete()
+            ProductDetailsEvent.OnDelete -> updateProduct(ProductOperation.Delete)
+            ProductDetailsEvent.OnUpdate -> updateProduct(ProductOperation.Update)
         }
     }
 
@@ -58,23 +62,21 @@ internal class DefaultProductDetailsComponent(
         }
     }
 
-    private fun delete() {
+    private fun updateProduct(productOperation: ProductOperation) {
         scope.launch {
-            val productId = state.value.product.id
             state.update { it.copy(isLoading = true) }
-            productRepository.deleteProduct(productId)
-            state.update { it.copy(isLoading = false) }
-            onDeleted(productId)
-        }
-    }
-
-    private fun save() {
-        scope.launch {
             val product = state.value.product
-            state.update { it.copy(isLoading = true) }
-            productRepository.updateProduct(product)
+
+            when (productOperation) {
+                is ProductOperation.Delete -> {
+                    productRepository.deleteProduct(product.id)
+                }
+                is ProductOperation.Update -> {
+                    productRepository.updateProduct(product)
+                }
+            }
             state.update { it.copy(isLoading = false) }
-            onUpdated(product)
+            onUpdated(productOperation, product)
         }
     }
 }

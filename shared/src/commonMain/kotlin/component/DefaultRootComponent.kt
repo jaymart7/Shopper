@@ -12,10 +12,10 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import component.RootComponent.Child
-import component.RootComponent.Model
 import component.RootComponent.Child.Home
 import component.RootComponent.Child.Login
 import component.RootComponent.Child.ProductDetails
+import component.RootComponent.Model
 import kotlinx.serialization.Serializable
 import model.Product
 import org.koin.core.component.KoinComponent
@@ -107,15 +107,20 @@ class DefaultRootComponent(
         DefaultProductDetailsComponent(
             componentContext = componentContext,
             selectedProduct = product,
-            onUpdated = { updatedProduct ->
-                showSnackbar("Product updated.")
+            onUpdated = { productOperation, selectedProduct ->
                 onBackClicked()
-                (stack.active.instance as? Home)?.component?.update(updatedProduct)
-            },
-            onDeleted = { productId ->
-                showSnackbar("Product deleted.")
-                onBackClicked()
-                (stack.active.instance as? Home)?.component?.delete(productId)
+                val homeComponent = (stack.active.instance as? Home)?.component
+                when (productOperation) {
+                    ProductOperation.Delete -> {
+                        homeComponent?.delete(selectedProduct.id)
+                        showSnackbar("Deleted: ${product.title}")
+                    }
+
+                    ProductOperation.Update -> {
+                        homeComponent?.update(selectedProduct)
+                        showSnackbar("Updated: ${product.title}")
+                    }
+                }
             }
         )
 

@@ -59,7 +59,7 @@ private fun ProductDetailsContent(
         ) {
             TextButton(
                 modifier = Modifier.weight(1f),
-                onClick = { onEvent(ProductDetailsEvent.Delete) },
+                onClick = { onEvent(ProductDetailsEvent.OnDelete) },
                 enabled = model.isLoading.not(),
                 content = {
                     Text("Delete")
@@ -70,7 +70,7 @@ private fun ProductDetailsContent(
 
             Button(
                 modifier = Modifier.weight(1f),
-                onClick = { onEvent(ProductDetailsEvent.Update) },
+                onClick = { onEvent(ProductDetailsEvent.OnUpdate) },
                 enabled = model.isLoading.not(),
                 content = {
                     Text("Update")
