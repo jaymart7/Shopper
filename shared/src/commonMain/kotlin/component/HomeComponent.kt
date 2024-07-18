@@ -5,7 +5,6 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import component.HomeComponent.Model
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import model.Product
 import model.presentation.Account
@@ -79,7 +78,6 @@ internal class DefaultHomeComponent(
                 val account = accountRepository.getAccount()
                 state.update { it.copy(accountState = ViewState.Success(account)) }
             } catch (e: Exception) {
-                Napier.e(e.message.orEmpty(), e)
                 state.update { it.copy(accountState = ViewState.Error(e)) }
             }
         }

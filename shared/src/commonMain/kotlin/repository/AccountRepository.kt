@@ -1,16 +1,11 @@
 package repository
 
-import di.json
-import di.url
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import model.mapper.toAccount
 import model.presentation.Account
 import model.request.LoginRequest
@@ -37,22 +32,16 @@ class AccountRepositoryImpl(
         username: String,
         password: String
     ) {
-        val response: HttpResponse = httpClient.post("$url/login") {
-            contentType(ContentType.Application.Json)
+        val response = httpClient.post("login") {
             setBody(LoginRequest(username, password))
         }
-        val token = json.decodeFromString<TokenResponse>(response.bodyAsText()).token
-        sessionRepository.setToken(token)
+        val token: TokenResponse = response.body()
+        sessionRepository.setToken(token.token)
     }
 
     override suspend fun getAccount(): Account {
-        val token = sessionRepository.getToken()
-        val response = httpClient.get("$url/account") {
-            contentType(ContentType.Application.Json)
-            header("Authorization", "Bearer $token")
-        }
-
-        val accountResponse = json.decodeFromString<AccountResponse>(response.bodyAsText())
+        val response = httpClient.get("account")
+        val accountResponse: AccountResponse = response.body()
         return accountResponse.toAccount()
     }
 

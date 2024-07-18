@@ -42,7 +42,6 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.bundles.ktor.common)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.napier)
 
             api(libs.koin.core)
             api(libs.koin.compose.multiplatform)
@@ -58,6 +57,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.slf4j.android)
         }
         jvmMain.dependencies {
             implementation(libs.kotlinx.coroutines.swing)

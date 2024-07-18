@@ -6,7 +6,7 @@ import ph.mart.shopper.db.ShopperDatabase
 
 class JVMPlatform : Platform {
     override val name: String = "Java ${System.getProperty("java.version")}"
-    override val host: String = "http://localhost"
+    override val host: String = "localhost"
 }
 
 actual fun getPlatform(): Platform = JVMPlatform()
