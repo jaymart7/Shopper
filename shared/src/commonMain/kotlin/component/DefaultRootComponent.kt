@@ -14,6 +14,7 @@ import com.arkivanov.decompose.value.update
 import component.RootComponent.Child
 import component.RootComponent.Child.Home
 import component.RootComponent.Child.Login
+import component.RootComponent.Child.NewProduct
 import component.RootComponent.Child.ProductDetails
 import component.RootComponent.Model
 import kotlinx.serialization.Serializable
@@ -30,18 +31,20 @@ interface RootComponent {
 
     fun onBackClicked()
 
+    fun onFabClicked()
+
     fun clearSnackbar()
 
     sealed class Child {
         class Login(val component: LoginComponent) : Child()
         class Home(val component: HomeComponent) : Child()
-        class ProductDetails(
-            val component: ProductDetailsComponent
-        ) : Child()
+        class ProductDetails(val component: ProductDetailsComponent) : Child()
+        class NewProduct(val component: NewProductComponent) : Child()
     }
 
     data class Model(
-        val snackBarMessage: String? = null
+        val snackBarMessage: String? = null,
+        val isFabVisible: Boolean = false
     )
 }
 
@@ -81,6 +84,12 @@ class DefaultRootComponent(
             productComponent(
                 componentContext = childComponentContext,
                 product = config.product
+            )
+        )
+
+        is Config.NewProduct -> NewProduct(
+            newProductComponent(
+                componentContext = childComponentContext
             )
         )
     }
@@ -124,8 +133,23 @@ class DefaultRootComponent(
             }
         )
 
+    private fun newProductComponent(
+        componentContext: ComponentContext
+    ): NewProductComponent = DefaultNewProductComponent(
+        componentContext = componentContext,
+        onAdded = { newProduct ->
+            onBackClicked()
+            (stack.active.instance as? Home)?.component?.add(newProduct)
+            showSnackbar("Added: ${newProduct.title}")
+        }
+    )
+
     private fun showSnackbar(message: String) {
         state.update { it.copy(snackBarMessage = message) }
+    }
+
+    override fun onFabClicked() {
+        navigation.push(Config.NewProduct)
     }
 
     override fun clearSnackbar() {
@@ -146,5 +170,8 @@ class DefaultRootComponent(
 
         @Serializable
         data class ProductDetails(val product: Product) : Config
+
+        @Serializable
+        data object NewProduct : Config
     }
 }

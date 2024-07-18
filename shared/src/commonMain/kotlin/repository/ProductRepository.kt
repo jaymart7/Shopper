@@ -3,6 +3,7 @@ package repository
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.delay
 import model.Product
+import kotlin.random.Random
 
 interface ProductRepository {
 
@@ -11,6 +12,8 @@ interface ProductRepository {
     suspend fun updateProduct(product: Product)
 
     suspend fun deleteProduct(id: Int)
+
+    suspend fun addProduct(title: String): Int
 }
 
 class ProductRepositoryImpl(
@@ -35,5 +38,11 @@ class ProductRepositoryImpl(
     override suspend fun deleteProduct(id: Int) {
         delay(1000)
         //TODO
+    }
+
+    override suspend fun addProduct(title: String): Int {
+        delay(1000)
+        //TODO
+        return Random.nextInt(101, 1000)
     }
 }

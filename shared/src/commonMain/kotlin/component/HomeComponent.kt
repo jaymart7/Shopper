@@ -28,6 +28,8 @@ interface HomeComponent {
     fun update(updatedProduct: Product)
 
     fun delete(productId: Int)
+
+    fun add(product: Product)
 }
 
 sealed class HomeEvent {
@@ -89,6 +91,16 @@ internal class DefaultHomeComponent(
 
             // Update state with updated products
             updatedProducts?.let { updateProducts(it) }
+        }
+    }
+
+    override fun add(product: Product) {
+        scope.launch {
+            val updatedProducts = listOf(product) + getProducts().orEmpty()
+            delay(500) // For animateItemPlacement
+
+            // Update state with updated products
+            updateProducts(updatedProducts)
         }
     }
 

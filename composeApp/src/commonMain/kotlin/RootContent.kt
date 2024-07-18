@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -67,7 +69,21 @@ fun RootContent(
                             is Child.Login -> LoginContent(component = instance.component)
                             is Child.Home -> HomeContent(component = instance.component)
                             is Child.ProductDetails -> ProductDetailsContent(instance.component)
+                            is Child.NewProduct -> NewProductContent(component = instance.component)
                         }
+                    }
+                },
+                floatingActionButton = {
+                    if (stack.active.instance is Child.Home) {
+                        FloatingActionButton(
+                            onClick = component::onFabClicked,
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add"
+                                )
+                            }
+                        )
                     }
                 }
             )
@@ -93,7 +109,7 @@ private fun TopAppBar(
                     content = {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Menu"
+                            contentDescription = "Back"
                         )
                     }
                 )
