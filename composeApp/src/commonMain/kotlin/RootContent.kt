@@ -16,6 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -35,6 +36,15 @@ fun RootContent(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val stack by component.stack.subscribeAsState()
+    val model by component.model.subscribeAsState()
+
+    // Show snackbar
+    model.snackBarMessage?.let {
+        LaunchedEffect(it) {
+            snackbarHostState.showSnackbar(it)
+            component.clearSnackbar()
+        }
+    }
 
     MaterialTheme {
         Surface(modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars)) {

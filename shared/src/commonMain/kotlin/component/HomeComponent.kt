@@ -24,7 +24,7 @@ interface HomeComponent {
 
     fun handleEvent(event: HomeEvent)
 
-    fun update()
+    fun update(updatedProduct: Product)
 }
 
 sealed class HomeEvent {
@@ -62,8 +62,33 @@ internal class DefaultHomeComponent(
         }
     }
 
-    override fun update() {
-        // TODO update product
+    override fun update(updatedProduct: Product) {
+        scope.launch {
+            // Find and update product list
+            val updatedProducts = getProducts()?.map {
+                if (it.id == updatedProduct.id) {
+                    updatedProduct
+                } else {
+                    it
+                }
+            }
+
+            // Update state with updated products
+            updatedProducts?.let { products ->
+                state.update {
+                    it.copy(
+                        productsState = ViewState.Success(products)
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getProducts(): List<Product>? {
+        return when (val products = state.value.productsState) {
+            is ViewState.Success -> products.data
+            else -> null
+        }
     }
 
     private fun logout() {

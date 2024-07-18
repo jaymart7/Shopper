@@ -8,8 +8,11 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
+import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.decompose.value.update
 import component.RootComponent.Child
+import component.RootComponent.Model
 import component.RootComponent.Child.Home
 import component.RootComponent.Child.Login
 import component.RootComponent.Child.ProductDetails
@@ -23,7 +26,11 @@ interface RootComponent {
 
     val stack: Value<ChildStack<*, Child>>
 
+    val model: Value<Model>
+
     fun onBackClicked()
+
+    fun clearSnackbar()
 
     sealed class Child {
         class Login(val component: LoginComponent) : Child()
@@ -32,6 +39,10 @@ interface RootComponent {
             val component: ProductDetailsComponent
         ) : Child()
     }
+
+    data class Model(
+        val snackBarMessage: String? = null
+    )
 }
 
 class DefaultRootComponent(
@@ -41,6 +52,9 @@ class DefaultRootComponent(
     private val accountRepository by inject<AccountRepository>()
 
     private val navigation = StackNavigation<Config>()
+
+    private val state = MutableValue(Model())
+    override val model: Value<Model> = state
 
     override val stack: Value<ChildStack<*, Child>> =
         childStack(
@@ -93,11 +107,20 @@ class DefaultRootComponent(
         DefaultProductDetailsComponent(
             componentContext = componentContext,
             selectedProduct = product,
-            back = {
+            onUpdated = { updatedProduct ->
+                showSnackbar("Product updated.")
                 onBackClicked()
-                (stack.active.instance as? Home)?.component?.update()
+                (stack.active.instance as? Home)?.component?.update(updatedProduct)
             }
         )
+
+    private fun showSnackbar(message: String) {
+        state.update { it.copy(snackBarMessage = message) }
+    }
+
+    override fun clearSnackbar() {
+        state.update { it.copy(snackBarMessage = null) }
+    }
 
     override fun onBackClicked() {
         navigation.pop()

@@ -30,7 +30,7 @@ sealed class ProductDetailsEvent {
 internal class DefaultProductDetailsComponent(
     componentContext: ComponentContext,
     selectedProduct: Product,
-    private val back: () -> Unit
+    private val onUpdated: (Product) -> Unit
 ) : ComponentContext by componentContext, ProductDetailsComponent, KoinComponent {
 
     private val productRepository: ProductRepository by inject<ProductRepository>()
@@ -60,7 +60,7 @@ internal class DefaultProductDetailsComponent(
             state.update { it.copy(isLoading = true) }
             productRepository.updateProduct(state.value.product)
             state.update { it.copy(isLoading = false) }
-            back()
+            onUpdated(state.value.product)
         }
     }
 }
