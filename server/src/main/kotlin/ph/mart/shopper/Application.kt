@@ -13,6 +13,7 @@ import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.response.respond
+import ph.mart.shopper.model.response.ApiError
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -40,7 +41,11 @@ fun Application.main() {
                 }
             }
             challenge { defaultScheme, realm ->
-                call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
+                val apiError = ApiError(
+                    code = HttpStatusCode.Unauthorized.value.toString(),
+                    message = "Please re-login"
+                )
+                call.respond(HttpStatusCode.Unauthorized, apiError)
             }
         }
 

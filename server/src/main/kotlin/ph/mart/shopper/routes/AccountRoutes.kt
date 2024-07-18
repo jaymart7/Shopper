@@ -2,22 +2,32 @@ package ph.mart.shopper.routes
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.route
 import ph.mart.shopper.model.LoginRequest
 import ph.mart.shopper.model.request.AccountRequest
+import ph.mart.shopper.model.response.ApiError
 import ph.mart.shopper.repository.AccountRepository
-import io.ktor.http.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import java.util.*
+import java.util.Date
 
 internal fun Route.accountRouting(accountRepository: AccountRepository) {
 
-    val secret = environment?.config?.property("jwt.secret")?.getString()
-    val issuer = environment?.config?.property("jwt.issuer")?.getString()
-    val audience = environment?.config?.property("jwt.audience")?.getString()
+    val accountNotFound = ApiError(
+        code = HttpStatusCode.NotFound.value.toString(),
+        message = "Account not found"
+    )
+
+    val secret = environment.config.property("jwt.secret").getString()
+    val issuer = environment.config.property("jwt.issuer").getString()
+    val audience = environment.config.property("jwt.audience").getString()
 
     authenticate("auth-jwt") {
         get("/account") {
@@ -28,7 +38,7 @@ internal fun Route.accountRouting(accountRepository: AccountRepository) {
             if (accountResponse != null) {
                 call.respond(HttpStatusCode.OK, accountResponse)
             } else {
-                call.respond(HttpStatusCode.NotFound, "Account not found")
+                call.respond(HttpStatusCode.NotFound, accountNotFound)
             }
         }
     }
@@ -39,10 +49,7 @@ internal fun Route.accountRouting(accountRepository: AccountRepository) {
             val accountSession = accountRepository.login(loginRequest)
 
             if (accountSession == null) {
-                call.respondText(
-                    "Account not found",
-                    status = HttpStatusCode.NotFound
-                )
+                call.respond(HttpStatusCode.NotFound, accountNotFound)
             } else {
                 val token = JWT.create()
                     .withAudience(audience)

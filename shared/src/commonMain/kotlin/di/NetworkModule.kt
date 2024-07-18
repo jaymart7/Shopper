@@ -2,6 +2,9 @@ package di
 
 import Platform
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -15,6 +18,7 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import model.response.ApiError
 import org.koin.dsl.module
 import repository.SessionRepository
 
@@ -37,11 +41,25 @@ private fun createHttpClient(
             level = LogLevel.ALL
         }
 
+        expectSuccess = true
         HttpResponseValidator {
-            validateResponse { response ->
-                if (response.status.value == 401) {
-                    sessionRepository.clearSession()
-                    // TODO navigate to login screen
+            handleResponseExceptionWithRequest { exception, _ ->
+                when (exception) {
+                    is ConnectTimeoutException -> {
+                        throw Exception("Please check your network connection.")
+                    }
+
+                    is ClientRequestException -> {
+                        val apiError = exception.response.body<ApiError>()
+                        if (apiError.code == "401") {
+                            sessionRepository.clearSession()
+                        }
+                        throw apiError
+                    }
+
+                    else -> {
+                        throw Exception("Something went wrong")
+                    }
                 }
             }
         }
