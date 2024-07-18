@@ -1,6 +1,6 @@
 package di
 
-import getPlatform
+import Platform
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -21,13 +21,15 @@ import repository.SessionRepository
 val networkModule = module {
     single<HttpClient> {
         createHttpClient(
-            sessionRepository = get()
+            sessionRepository = get(),
+            platform = get()
         )
     }
 }
 
 private fun createHttpClient(
-    sessionRepository: SessionRepository
+    sessionRepository: SessionRepository,
+    platform: Platform
 ): HttpClient {
     return HttpClient {
         install(Logging) {
@@ -48,7 +50,7 @@ private fun createHttpClient(
             url {
                 protocol = URLProtocol.HTTP
                 port = 8080
-                host = getPlatform().host
+                host = platform.host
             }
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer ${sessionRepository.getToken().orEmpty()}")

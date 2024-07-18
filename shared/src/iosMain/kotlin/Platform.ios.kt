@@ -1,8 +1,20 @@
+import app.cash.sqldelight.db.SqlDriver
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import platform.UIKit.UIDevice
 
-class IOSPlatform: Platform {
-    override val name: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
-    override val host: String = "localhost"
-}
+actual fun platformModule(): Module {
+    return module {
+        single<SqlDriver> {
+            TODO("")
+        }
 
-actual fun getPlatform(): Platform = IOSPlatform()
+        single<Platform> {
+            object : Platform {
+                override val name: String = UIDevice.currentDevice.systemName() +
+                        " " + UIDevice.currentDevice.systemVersion
+                override val host: String = "localhost"
+            }
+        }
+    }
+}

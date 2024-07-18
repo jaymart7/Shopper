@@ -5,13 +5,6 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import org.koin.dsl.module
 import ph.mart.shopper.db.ShopperDatabase
 
-class AndroidPlatform : Platform {
-    override val name: String = "Android ${Build.VERSION.SDK_INT}"
-    override val host: String = "10.0.2.2"
-}
-
-actual fun getPlatform(): Platform = AndroidPlatform()
-
 actual fun platformModule() = module {
     single<SqlDriver> {
         AndroidSqliteDriver(
@@ -23,5 +16,12 @@ actual fun platformModule() = module {
                     db.setForeignKeyConstraintsEnabled(true) // enabling foreign key constraints for the Android SQLite driver.
                 }
             })
+    }
+
+    single<Platform> {
+        object : Platform {
+            override val name: String = "Android ${Build.VERSION.SDK_INT}"
+            override val host: String = "10.0.2.2"
+        }
     }
 }

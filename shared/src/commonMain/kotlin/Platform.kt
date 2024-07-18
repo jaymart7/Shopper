@@ -6,5 +6,3 @@ interface Platform {
 }
 
 expect fun platformModule(): Module
-
-expect fun getPlatform(): Platform
