@@ -111,6 +111,11 @@ class DefaultRootComponent(
                 showSnackbar("Product updated.")
                 onBackClicked()
                 (stack.active.instance as? Home)?.component?.update(updatedProduct)
+            },
+            onDeleted = { productId ->
+                showSnackbar("Product deleted.")
+                onBackClicked()
+                (stack.active.instance as? Home)?.component?.delete(productId)
             }
         )
 

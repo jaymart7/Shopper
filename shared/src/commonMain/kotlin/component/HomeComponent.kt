@@ -5,6 +5,7 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import component.HomeComponent.Model
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Product
 import model.presentation.Account
@@ -25,6 +26,8 @@ interface HomeComponent {
     fun handleEvent(event: HomeEvent)
 
     fun update(updatedProduct: Product)
+
+    fun delete(productId: Int)
 }
 
 sealed class HomeEvent {
@@ -74,13 +77,26 @@ internal class DefaultHomeComponent(
             }
 
             // Update state with updated products
-            updatedProducts?.let { products ->
-                state.update {
-                    it.copy(
-                        productsState = ViewState.Success(products)
-                    )
-                }
-            }
+            updatedProducts?.let { updateProducts(it) }
+        }
+    }
+
+    override fun delete(productId: Int) {
+        scope.launch {
+            // Remove from product list
+            val updatedProducts = getProducts()?.filter { it.id != productId }
+            delay(500) // For animateItemPlacement
+
+            // Update state with updated products
+            updatedProducts?.let { updateProducts(it) }
+        }
+    }
+
+    private fun updateProducts(products: List<Product>) {
+        state.update {
+            it.copy(
+                productsState = ViewState.Success(products)
+            )
         }
     }
 

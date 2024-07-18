@@ -31,7 +31,6 @@ internal fun ButtonWithLoading(
 
     Button(
         modifier = modifier
-            .fillMaxWidth()
             .then(
                 if (buttonSize != DpSize.Zero) Modifier.size(buttonSize) else Modifier
                     .onSizeChanged { newSize ->

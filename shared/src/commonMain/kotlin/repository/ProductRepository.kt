@@ -9,6 +9,8 @@ interface ProductRepository {
     suspend fun getProduct(): List<Product>
 
     suspend fun updateProduct(product: Product)
+
+    suspend fun deleteProduct(id: Int)
 }
 
 class ProductRepositoryImpl(
@@ -30,4 +32,8 @@ class ProductRepositoryImpl(
         // TODO
     }
 
+    override suspend fun deleteProduct(id: Int) {
+        delay(1000)
+        //TODO
+    }
 }

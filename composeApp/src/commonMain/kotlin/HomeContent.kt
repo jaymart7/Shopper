@@ -1,3 +1,4 @@
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -117,6 +118,7 @@ private fun AccountContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProductContent(
     onItemClick: (Product) -> Unit,
@@ -152,6 +154,7 @@ fun ProductContent(
                         key = { it.id },
                         itemContent = {
                             ProductItem(
+                                modifier = Modifier.animateItemPlacement(),
                                 onClick = { onItemClick(it) },
                                 product = it
                             )
