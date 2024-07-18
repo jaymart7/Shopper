@@ -19,6 +19,7 @@ interface HomeComponent {
     val model: Value<Model>
 
     data class Model(
+        val scrollTo: Int? = null,
         val accountState: ViewState<Account> = ViewState.Loading,
         val productsState: ViewState<List<Product>> = ViewState.Loading
     )
@@ -36,6 +37,7 @@ sealed class HomeEvent {
     data object Logout : HomeEvent()
     data object RefreshAccount : HomeEvent()
     data object RefreshProduct : HomeEvent()
+    data object ClearScroll: HomeEvent()
     data class ProductClick(val product: Product) : HomeEvent()
 }
 
@@ -63,8 +65,13 @@ internal class DefaultHomeComponent(
             is HomeEvent.ProductClick -> onProductClick(event.product)
             is HomeEvent.Logout -> logout()
             is HomeEvent.RefreshAccount -> fetchAccount()
+            is HomeEvent.ClearScroll -> clearScroll()
             is HomeEvent.RefreshProduct -> fetchAccount()
         }
+    }
+
+    private fun clearScroll() {
+        state.update { it.copy(scrollTo = null) }
     }
 
     override fun update(updatedProduct: Product) {
@@ -97,10 +104,11 @@ internal class DefaultHomeComponent(
     override fun add(product: Product) {
         scope.launch {
             val updatedProducts = listOf(product) + getProducts().orEmpty()
-            delay(500) // For animateItemPlacement
 
             // Update state with updated products
             updateProducts(updatedProducts)
+
+            state.update { it.copy(scrollTo = 0) }
         }
     }
 
