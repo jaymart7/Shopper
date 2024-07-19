@@ -175,3 +175,16 @@ class DefaultRootComponent(
         data object NewProduct : Config
     }
 }
+
+fun Child.isFabVisible(): Boolean {
+    return this is Home
+}
+
+fun Child.getTitle(): String {
+    return when (this) {
+        is Home -> "Home"
+        is Login -> "Login"
+        is NewProduct -> "New Product"
+        is ProductDetails -> "Product Details"
+    }
+}

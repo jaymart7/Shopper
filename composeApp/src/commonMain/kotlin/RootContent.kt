@@ -30,6 +30,8 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import component.RootComponent
 import component.RootComponent.Child
+import component.getTitle
+import component.isFabVisible
 
 @Composable
 fun RootContent(
@@ -56,6 +58,7 @@ fun RootContent(
                 topBar = {
                     TopAppBar(
                         onBack = component::onBackClicked,
+                        title = stack.active.instance.getTitle(),
                         hasBackStack = stack.backStack.isNotEmpty()
                     )
                 },
@@ -74,7 +77,7 @@ fun RootContent(
                     }
                 },
                 floatingActionButton = {
-                    if (stack.active.instance is Child.Home) {
+                    if (stack.active.instance.isFabVisible()) {
                         FloatingActionButton(
                             onClick = component::onFabClicked,
                             content = {
@@ -96,12 +99,18 @@ fun RootContent(
 @Composable
 private fun TopAppBar(
     onBack: () -> Unit,
+    title: String,
     hasBackStack: Boolean,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
         modifier = modifier,
-        title = { Text("title") },
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
         navigationIcon = {
             if (hasBackStack) {
                 IconButton(
