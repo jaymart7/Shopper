@@ -4,8 +4,22 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import org.koin.dsl.module
 import ph.mart.shopper.db.ShopperDatabase
+import repository.SessionRepository
+import repository.SessionRepositoryImpl
 
 actual fun platformModule() = module {
+    single<SessionRepository> {
+        SessionRepositoryImpl(
+            shopperDatabase = get()
+        )
+    }
+
+    single<ShopperDatabase> {
+        ShopperDatabase(
+            driver = get<SqlDriver>()
+        )
+    }
+
     single<SqlDriver> {
         AndroidSqliteDriver(
             schema = ShopperDatabase.Schema,

@@ -37,7 +37,7 @@ sealed class HomeEvent {
     data object Logout : HomeEvent()
     data object RefreshAccount : HomeEvent()
     data object RefreshProduct : HomeEvent()
-    data object ClearScroll: HomeEvent()
+    data object ClearScroll : HomeEvent()
     data class ProductClick(val product: Product) : HomeEvent()
 }
 

@@ -20,8 +20,6 @@ import component.RootComponent.Model
 import kotlinx.serialization.Serializable
 import model.Product
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import repository.AccountRepository
 
 interface RootComponent {
 
@@ -52,8 +50,6 @@ class DefaultRootComponent(
     componentContext: ComponentContext,
 ) : RootComponent, ComponentContext by componentContext, KoinComponent {
 
-    private val accountRepository by inject<AccountRepository>()
-
     private val navigation = StackNavigation<Config>()
 
     private val state = MutableValue(Model())
@@ -63,11 +59,7 @@ class DefaultRootComponent(
         childStack(
             source = navigation,
             serializer = Config.serializer(),
-            initialConfiguration = if (accountRepository.hasToken()) {
-                Config.Home
-            } else {
-                Config.Login
-            },
+            initialConfiguration = Config.Home,
             handleBackButton = true,
             childFactory = ::child,
         )

@@ -29,3 +29,17 @@ internal class SessionRepositoryImpl(
         queries.deleteAll()
     }
 }
+
+internal class FakeSessionRepositoryImpl : SessionRepository {
+    override fun setToken(token: String) {
+
+    }
+
+    override fun getToken(): String {
+        return "admin"
+    }
+
+    override fun clearSession() {
+
+    }
+}

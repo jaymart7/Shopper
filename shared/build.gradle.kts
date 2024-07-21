@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -11,20 +9,10 @@ plugins {
 }
 
 kotlin {
-    /*@OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser {
-            commonWebpackConfig {
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(project.projectDir.path)
-                    }
-                }
-            }
-        }
-    }*/
-    
+    js(IR) {
+        browser()
+    }
+
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -65,14 +53,10 @@ kotlin {
             implementation(libs.slf4j)
             implementation(libs.sqldelight.sqlite.driver)
         }
-        /*jsMain.dependencies {
+        jsMain.dependencies {
             implementation(libs.ktor.client.js)
-
-            implementation(libs.sqljs.driver)
-            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.0.2"))
-            implementation(npm("sql.js", "1.6.2"))
-            implementation(devNpm("copy-webpack-plugin", "9.1.0"))
-        }*/
+            implementation(libs.koin.core.js)
+        }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.sqldelight.native.driver)

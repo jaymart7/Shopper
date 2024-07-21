@@ -80,6 +80,7 @@ koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", versio
 koin-android-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-android-compose" }
 koin-compose-multiplatform = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose-multiplatform" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-core" }
+koin-core-js = { module = "io.insert-koin:koin-core-js", version.ref = "koin-core" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin-core" }
 koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin-core" }
 

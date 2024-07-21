@@ -104,6 +104,13 @@ private fun AccountContent(
                     maxLines = 1
                 )
 
+                OutlinedButton(
+                    onClick = onLogout,
+                    content = {
+                        Text("Logout")
+                    }
+                )
+
                 Button(
                     onClick = onRefresh,
                     content = {
