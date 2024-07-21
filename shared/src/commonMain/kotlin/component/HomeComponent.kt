@@ -9,6 +9,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Product
 import model.presentation.Account
+import model.response.ApiError
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.AccountRepository
@@ -20,7 +21,7 @@ interface HomeComponent {
 
     data class Model(
         val scrollTo: Int? = null,
-        val accountState: ViewState<Account> = ViewState.Loading,
+        val accountState: AccountState = AccountState.Loading,
         val productsState: ViewState<List<Product>> = ViewState.Loading
     )
 
@@ -31,6 +32,19 @@ interface HomeComponent {
     fun delete(productId: Int)
 
     fun add(product: Product)
+}
+
+sealed class AccountState {
+
+    data object Loading : AccountState()
+
+    data object Login : AccountState()
+
+    data object ExpiredToken : AccountState()
+
+    data class Success(val account: Account) : AccountState()
+
+    data class Error(val error: Throwable) : AccountState()
 }
 
 sealed class HomeEvent {
@@ -133,13 +147,22 @@ internal class DefaultHomeComponent(
     }
 
     private fun fetchAccount() {
+        if (accountRepository.hasToken().not()) {
+            state.update { it.copy(accountState = AccountState.Login) }
+            return
+        }
         scope.launch {
             try {
-                state.update { it.copy(accountState = ViewState.Loading) }
+                state.update { it.copy(accountState = AccountState.Loading) }
                 val account = accountRepository.getAccount()
-                state.update { it.copy(accountState = ViewState.Success(account)) }
+                state.update { it.copy(accountState = AccountState.Success(account)) }
             } catch (e: Exception) {
-                state.update { it.copy(accountState = ViewState.Error(e)) }
+                val accountState = if ((e as? ApiError)?.code == "401") {
+                    AccountState.ExpiredToken
+                } else {
+                    AccountState.Error(e)
+                }
+                state.update { it.copy(accountState = accountState) }
             }
         }
     }

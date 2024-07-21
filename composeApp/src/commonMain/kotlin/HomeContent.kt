@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import component.AccountState
 import component.HomeComponent
 import component.HomeEvent
 import model.Product
@@ -86,7 +87,7 @@ private fun HomeContent(
 private fun AccountContent(
     onRefresh: () -> Unit,
     onLogout: () -> Unit,
-    accountState: ViewState<Account>,
+    accountState: AccountState,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -97,18 +98,11 @@ private fun AccountContent(
             .fillMaxWidth()
     ) {
         when (accountState) {
-            is ViewState.Error -> {
+            is AccountState.Error -> {
                 Text(
                     accountState.error.message.orEmpty(),
                     modifier = Modifier.weight(1f),
                     maxLines = 1
-                )
-
-                OutlinedButton(
-                    onClick = onLogout,
-                    content = {
-                        Text("Logout")
-                    }
                 )
 
                 Button(
@@ -119,11 +113,11 @@ private fun AccountContent(
                 )
             }
 
-            is ViewState.Loading -> CircularProgressIndicator()
+            is AccountState.Loading -> CircularProgressIndicator()
 
-            is ViewState.Success -> {
+            is AccountState.Success -> {
                 Text(
-                    text = accountState.data.name,
+                    text = accountState.account.name,
                     maxLines = 1
                 )
 
@@ -134,6 +128,20 @@ private fun AccountContent(
                     }
                 )
             }
+
+            is AccountState.ExpiredToken -> OutlinedButton(
+                onClick = onLogout,
+                content = {
+                    Text("Logout")
+                }
+            )
+
+            is AccountState.Login -> OutlinedButton(
+                onClick = onLogout,
+                content = {
+                    Text("Login")
+                }
+            )
         }
     }
 }
@@ -215,7 +223,7 @@ fun HomeScreenPreview() {
     HomeContent(
         onEvent = {},
         model = HomeComponent.Model(
-            accountState = ViewState.Success(account),
+            accountState = AccountState.Success(account),
             productsState = ViewState.Success(
                 listOf(
                     Product(1, "Product 1"),
