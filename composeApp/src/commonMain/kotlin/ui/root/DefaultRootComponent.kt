@@ -1,4 +1,4 @@
-package component
+package ui.root
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
@@ -11,17 +11,26 @@ import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
-import component.RootComponent.Child
-import component.RootComponent.Child.Home
-import component.RootComponent.Child.Login
-import component.RootComponent.Child.NewProduct
-import component.RootComponent.Child.ProductDetails
-import component.RootComponent.Model
 import kotlinx.serialization.Serializable
 import model.Product
 import org.koin.core.component.KoinComponent
+import ui.home.DefaultHomeComponent
+import ui.home.HomeComponent
+import ui.login.DefaultLoginComponent
+import ui.login.LoginComponent
+import ui.newproduct.DefaultNewProductComponent
+import ui.newproduct.NewProductComponent
+import ui.productdetails.DefaultProductDetailsComponent
+import ui.productdetails.ProductDetailsComponent
+import ui.productdetails.ProductOperation
+import ui.root.RootComponent.Child
+import ui.root.RootComponent.Child.Home
+import ui.root.RootComponent.Child.Login
+import ui.root.RootComponent.Child.NewProduct
+import ui.root.RootComponent.Child.ProductDetails
+import ui.root.RootComponent.Model
 
-interface RootComponent {
+internal interface RootComponent {
 
     val stack: Value<ChildStack<*, Child>>
 
@@ -46,7 +55,7 @@ interface RootComponent {
     )
 }
 
-class DefaultRootComponent(
+internal class DefaultRootComponent(
     componentContext: ComponentContext,
 ) : RootComponent, ComponentContext by componentContext, KoinComponent {
 
@@ -165,18 +174,5 @@ class DefaultRootComponent(
 
         @Serializable
         data object NewProduct : Config
-    }
-}
-
-fun Child.isFabVisible(): Boolean {
-    return this is Home
-}
-
-fun Child.getTitle(): String {
-    return when (this) {
-        is Home -> "Home"
-        is Login -> "Login"
-        is NewProduct -> "New Product"
-        is ProductDetails -> "Product Details"
     }
 }

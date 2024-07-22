@@ -4,9 +4,11 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import component.DefaultRootComponent
+import ui.root.DefaultRootComponent
 import di.appModule
 import org.koin.core.context.startKoin
+import ui.home.HomeScreenPreview
+import ui.root.RootContent
 
 fun main() = application {
     startKoin {

@@ -3,9 +3,10 @@ import androidx.compose.ui.window.CanvasBasedWindow
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import component.DefaultRootComponent
+import ui.root.DefaultRootComponent
 import di.appModule
 import org.koin.core.context.startKoin
+import ui.root.RootContent
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {

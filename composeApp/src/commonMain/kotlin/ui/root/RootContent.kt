@@ -1,3 +1,8 @@
+package ui.root
+
+import ui.home.HomeContent
+import ui.login.LoginContent
+import ui.productdetails.ProductDetailsContent
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,14 +33,11 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import component.RootComponent
-import component.RootComponent.Child
-import component.getTitle
-import component.isFabVisible
-import newproduct.NewProductContent
+import ui.root.RootComponent.Child
+import ui.newproduct.NewProductContent
 
 @Composable
-fun RootContent(
+internal fun RootContent(
     component: RootComponent,
     modifier: Modifier = Modifier,
 ) {

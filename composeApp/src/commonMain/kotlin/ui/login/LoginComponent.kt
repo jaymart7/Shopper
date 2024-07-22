@@ -1,16 +1,17 @@
-package component
+package ui.login
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
-import component.LoginComponent.Model
+import component.componentCoroutineScope
+import ui.login.LoginComponent.Model
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.AccountRepository
 
-interface LoginComponent {
+internal interface LoginComponent {
     val model: Value<Model>
 
     fun onUpdateUsername(value: String)

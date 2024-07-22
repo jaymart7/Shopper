@@ -1,3 +1,5 @@
+package ui.home
+
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,9 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import component.AccountState
-import component.HomeComponent
-import component.HomeEvent
 import model.Product
 import model.presentation.Account
 import org.jetbrains.compose.ui.tooling.preview.Preview

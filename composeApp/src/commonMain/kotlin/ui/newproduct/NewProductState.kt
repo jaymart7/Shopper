@@ -1,4 +1,4 @@
-package newproduct
+package ui.newproduct
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf

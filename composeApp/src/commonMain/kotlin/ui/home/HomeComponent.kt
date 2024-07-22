@@ -1,10 +1,10 @@
-package component
+package ui.home
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
-import component.HomeComponent.Model
+import component.componentCoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Product
@@ -14,9 +14,10 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.AccountRepository
 import repository.ProductRepository
+import ui.home.HomeComponent.Model
 import util.ViewState
 
-interface HomeComponent {
+internal interface HomeComponent {
     val model: Value<Model>
 
     data class Model(
@@ -34,7 +35,7 @@ interface HomeComponent {
     fun add(product: Product)
 }
 
-sealed class AccountState {
+internal sealed class AccountState {
 
     data object Loading : AccountState()
 
@@ -47,7 +48,7 @@ sealed class AccountState {
     data class Error(val error: Throwable) : AccountState()
 }
 
-sealed class HomeEvent {
+internal sealed class HomeEvent {
     data object Logout : HomeEvent()
     data object RefreshAccount : HomeEvent()
     data object RefreshProduct : HomeEvent()

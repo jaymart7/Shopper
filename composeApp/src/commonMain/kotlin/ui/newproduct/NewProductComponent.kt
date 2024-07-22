@@ -1,17 +1,18 @@
-package component
+package ui.newproduct
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
-import component.NewProductComponent.Model
+import component.componentCoroutineScope
+import ui.newproduct.NewProductComponent.Model
 import kotlinx.coroutines.launch
 import model.Product
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.ProductRepository
 
-interface NewProductComponent {
+internal interface NewProductComponent {
     val model: Value<Model>
 
     data class Model(
@@ -21,7 +22,7 @@ interface NewProductComponent {
     fun handleEvent(event: NewProductEvent)
 }
 
-sealed class NewProductEvent {
+internal sealed class NewProductEvent {
     data class Add(val title: String) : NewProductEvent()
 }
 

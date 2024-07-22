@@ -1,4 +1,4 @@
-package newproduct
+package ui.newproduct
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import common.FullScreenLoading
-import component.NewProductComponent
-import component.NewProductEvent
 
 @Composable
 internal fun NewProductContent(

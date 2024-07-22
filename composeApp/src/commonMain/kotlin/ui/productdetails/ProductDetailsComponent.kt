@@ -1,17 +1,18 @@
-package component
+package ui.productdetails
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
-import component.ProductDetailsComponent.Model
+import component.componentCoroutineScope
+import ui.productdetails.ProductDetailsComponent.Model
 import kotlinx.coroutines.launch
 import model.Product
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.ProductRepository
 
-interface ProductDetailsComponent {
+internal interface ProductDetailsComponent {
     val model: Value<Model>
 
     data class Model(
@@ -22,13 +23,13 @@ interface ProductDetailsComponent {
     fun handleEvent(event: ProductDetailsEvent)
 }
 
-sealed class ProductDetailsEvent {
+internal sealed class ProductDetailsEvent {
     data class UpdateTitle(val title: String) : ProductDetailsEvent()
     data object OnUpdate: ProductDetailsEvent()
     data object OnDelete: ProductDetailsEvent()
 }
 
-sealed class ProductOperation {
+internal sealed class ProductOperation {
     data object Update: ProductOperation()
     data object Delete: ProductOperation()
 }
