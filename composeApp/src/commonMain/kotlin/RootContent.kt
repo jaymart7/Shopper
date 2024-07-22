@@ -32,6 +32,7 @@ import component.RootComponent
 import component.RootComponent.Child
 import component.getTitle
 import component.isFabVisible
+import newproduct.NewProductContent
 
 @Composable
 fun RootContent(

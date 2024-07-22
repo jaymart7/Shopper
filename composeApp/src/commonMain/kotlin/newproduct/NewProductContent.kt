@@ -1,3 +1,5 @@
+package newproduct
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,9 +21,11 @@ internal fun NewProductContent(
     modifier: Modifier = Modifier
 ) {
     val model by component.model.subscribeAsState()
+    val newProductState = rememberNewProductState()
 
     NewProductContent(
         onEvent = { component.handleEvent(it) },
+        state = newProductState,
         model = model,
         modifier = modifier
     )
@@ -30,6 +34,7 @@ internal fun NewProductContent(
 @Composable
 private fun NewProductContent(
     onEvent: (NewProductEvent) -> Unit,
+    state: NewProductState,
     model: NewProductComponent.Model,
     modifier: Modifier = Modifier
 ) {
@@ -39,15 +44,15 @@ private fun NewProductContent(
         Column(modifier = Modifier.weight(1f)) {
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = model.title,
-                onValueChange = { onEvent(NewProductEvent.UpdateTitle(it)) }
+                value = state.title,
+                onValueChange = { state.title = it }
             )
         }
 
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { onEvent(NewProductEvent.Add) },
-            enabled = model.title.isNotBlank(),
+            onClick = { onEvent(NewProductEvent.Add(state.title)) },
+            enabled = state.isAddEnabled,
             content = {
                 Text("Add")
             }

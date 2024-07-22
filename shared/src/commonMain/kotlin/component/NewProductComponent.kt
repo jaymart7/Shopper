@@ -15,16 +15,14 @@ interface NewProductComponent {
     val model: Value<Model>
 
     data class Model(
-        val isLoading: Boolean = false,
-        val title: String = ""
+        val isLoading: Boolean = false
     )
 
     fun handleEvent(event: NewProductEvent)
 }
 
 sealed class NewProductEvent {
-    data class UpdateTitle(val title: String) : NewProductEvent()
-    data object Add : NewProductEvent()
+    data class Add(val title: String) : NewProductEvent()
 }
 
 internal class DefaultNewProductComponent(
@@ -41,18 +39,12 @@ internal class DefaultNewProductComponent(
 
     override fun handleEvent(event: NewProductEvent) {
         when (event) {
-            is NewProductEvent.Add -> add()
-            is NewProductEvent.UpdateTitle -> updateTitle(event.title)
+            is NewProductEvent.Add -> add(event.title)
         }
     }
 
-    private fun updateTitle(title: String) {
-        state.update { it.copy(title = title) }
-    }
-
-    private fun add() {
+    private fun add(title: String) {
         scope.launch {
-            val title = state.value.title
             state.update { it.copy(isLoading = true) }
             val productId = productRepository.addProduct(title)
             state.update { it.copy(isLoading = false) }
