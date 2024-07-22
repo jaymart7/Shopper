@@ -11,7 +11,6 @@ import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
-import kotlinx.serialization.Serializable
 import model.Product
 import org.koin.core.component.KoinComponent
 import ui.home.DefaultHomeComponent
@@ -28,32 +27,8 @@ import ui.root.RootComponent.Child.Home
 import ui.root.RootComponent.Child.Login
 import ui.root.RootComponent.Child.NewProduct
 import ui.root.RootComponent.Child.ProductDetails
+import ui.root.RootComponent.Config
 import ui.root.RootComponent.Model
-
-internal interface RootComponent {
-
-    val stack: Value<ChildStack<*, Child>>
-
-    val model: Value<Model>
-
-    fun onBackClicked()
-
-    fun onFabClicked()
-
-    fun clearSnackbar()
-
-    sealed class Child {
-        class Login(val component: LoginComponent) : Child()
-        class Home(val component: HomeComponent) : Child()
-        class ProductDetails(val component: ProductDetailsComponent) : Child()
-        class NewProduct(val component: NewProductComponent) : Child()
-    }
-
-    data class Model(
-        val snackBarMessage: String? = null,
-        val isFabVisible: Boolean = false
-    )
-}
 
 internal class DefaultRootComponent(
     componentContext: ComponentContext,
@@ -159,20 +134,5 @@ internal class DefaultRootComponent(
 
     override fun onBackClicked() {
         navigation.pop()
-    }
-
-    @Serializable
-    private sealed interface Config {
-        @Serializable
-        data object Login : Config
-
-        @Serializable
-        data object Home : Config
-
-        @Serializable
-        data class ProductDetails(val product: Product) : Config
-
-        @Serializable
-        data object NewProduct : Config
     }
 }
