@@ -23,10 +23,12 @@ internal fun ProductDetailsContent(
     modifier: Modifier = Modifier
 ) {
     val model by component.model.subscribeAsState()
+    val state = rememberProductDetailsState(model.product)
 
     ProductDetailsContent(
         onEvent = { component.handleEvent(it) },
         model = model,
+        state = state,
         modifier = modifier
     )
 }
@@ -35,6 +37,7 @@ internal fun ProductDetailsContent(
 private fun ProductDetailsContent(
     onEvent: (ProductDetailsEvent) -> Unit,
     model: ProductDetailsComponent.Model,
+    state: ProductDetailsState,
     modifier: Modifier = Modifier
 ) {
     FullScreenLoading(model.isLoading)
@@ -47,8 +50,8 @@ private fun ProductDetailsContent(
         ) {
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = model.product.title,
-                onValueChange = { onEvent(ProductDetailsEvent.UpdateTitle(it)) }
+                value = state.title,
+                onValueChange = { state.title = it }
             )
         }
 
@@ -60,7 +63,6 @@ private fun ProductDetailsContent(
             TextButton(
                 modifier = Modifier.weight(1f),
                 onClick = { onEvent(ProductDetailsEvent.OnDelete) },
-                enabled = model.isLoading.not(),
                 content = {
                     Text("Delete")
                 }
@@ -70,8 +72,8 @@ private fun ProductDetailsContent(
 
             Button(
                 modifier = Modifier.weight(1f),
-                onClick = { onEvent(ProductDetailsEvent.OnUpdate) },
-                enabled = model.isLoading.not(),
+                onClick = { onEvent(ProductDetailsEvent.OnUpdate(state.updatedProduct)) },
+                enabled = state.isUpdateEnabled,
                 content = {
                     Text("Update")
                 }

@@ -15,7 +15,8 @@ import ui.productdetails.ProductDetailsComponent.Model
 internal class DefaultProductDetailsComponent(
     componentContext: ComponentContext,
     selectedProduct: Product,
-    private val onUpdated: (ProductOperation, Product) -> Unit
+    private val onUpdated: (Product) -> Unit,
+    private val onDeleted: (Product) -> Unit,
 ) : ComponentContext by componentContext, ProductDetailsComponent, KoinComponent {
 
     private val productRepository: ProductRepository by inject<ProductRepository>()
@@ -27,36 +28,27 @@ internal class DefaultProductDetailsComponent(
 
     override fun handleEvent(event: ProductDetailsEvent) {
         when (event) {
-            is ProductDetailsEvent.UpdateTitle -> updateTitle(event.title)
-            ProductDetailsEvent.OnDelete -> updateProduct(ProductOperation.Delete)
-            ProductDetailsEvent.OnUpdate -> updateProduct(ProductOperation.Update)
+            is ProductDetailsEvent.OnDelete -> delete()
+            is ProductDetailsEvent.OnUpdate -> update(event.product)
         }
     }
 
-    private fun updateTitle(title: String) {
-        state.update {
-            it.copy(
-                product = it.product.copy(title = title)
-            )
+    private fun delete() {
+        scope.launch {
+            val product = state.value.product
+            state.update { it.copy(isLoading = true) }
+            productRepository.deleteProduct(product.id)
+            state.update { it.copy(isLoading = false) }
+            onDeleted(product)
         }
     }
 
-    private fun updateProduct(productOperation: ProductOperation) {
+    private fun update(product: Product) {
         scope.launch {
             state.update { it.copy(isLoading = true) }
-            val product = state.value.product
-
-            when (productOperation) {
-                is ProductOperation.Delete -> {
-                    productRepository.deleteProduct(product.id)
-                }
-
-                is ProductOperation.Update -> {
-                    productRepository.updateProduct(product)
-                }
-            }
+            productRepository.updateProduct(product)
             state.update { it.copy(isLoading = false) }
-            onUpdated(productOperation, product)
+            onUpdated(product)
         }
     }
 }

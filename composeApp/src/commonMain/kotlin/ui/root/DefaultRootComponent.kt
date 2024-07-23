@@ -21,7 +21,6 @@ import ui.newproduct.DefaultNewProductComponent
 import ui.newproduct.NewProductComponent
 import ui.productdetails.DefaultProductDetailsComponent
 import ui.productdetails.ProductDetailsComponent
-import ui.productdetails.ProductOperation
 import ui.root.RootComponent.Child
 import ui.root.RootComponent.Child.Home
 import ui.root.RootComponent.Child.Login
@@ -92,20 +91,17 @@ internal class DefaultRootComponent(
         DefaultProductDetailsComponent(
             componentContext = componentContext,
             selectedProduct = product,
-            onUpdated = { productOperation, selectedProduct ->
+            onUpdated = { updatedProduct ->
                 onBackClicked()
                 val homeComponent = (stack.active.instance as? Home)?.component
-                when (productOperation) {
-                    ProductOperation.Delete -> {
-                        homeComponent?.delete(selectedProduct.id)
-                        showSnackbar("Deleted: ${product.title}")
-                    }
-
-                    ProductOperation.Update -> {
-                        homeComponent?.update(selectedProduct)
-                        showSnackbar("Updated: ${product.title}")
-                    }
-                }
+                homeComponent?.update(updatedProduct)
+                showSnackbar("Updated: ${updatedProduct.title}")
+            },
+            onDeleted = { deletedProduct ->
+                onBackClicked()
+                val homeComponent = (stack.active.instance as? Home)?.component
+                homeComponent?.delete(deletedProduct.id)
+                showSnackbar("Deleted: ${product.title}")
             }
         )
 

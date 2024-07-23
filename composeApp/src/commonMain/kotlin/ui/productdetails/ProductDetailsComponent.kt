@@ -15,12 +15,6 @@ internal interface ProductDetailsComponent {
 }
 
 internal sealed class ProductDetailsEvent {
-    data class UpdateTitle(val title: String) : ProductDetailsEvent()
-    data object OnUpdate : ProductDetailsEvent()
+    data class OnUpdate(val product: Product) : ProductDetailsEvent()
     data object OnDelete : ProductDetailsEvent()
-}
-
-internal sealed class ProductOperation {
-    data object Update : ProductOperation()
-    data object Delete : ProductOperation()
 }
