@@ -91,6 +91,7 @@ internal class DefaultRootComponent(
         DefaultProductDetailsComponent(
             componentContext = componentContext,
             selectedProduct = product,
+            onShowSnackbar = ::showSnackbar,
             onUpdated = { updatedProduct ->
                 onBackClicked()
                 val homeComponent = (stack.active.instance as? Home)?.component

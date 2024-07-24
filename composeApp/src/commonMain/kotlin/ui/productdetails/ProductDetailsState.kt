@@ -22,6 +22,7 @@ internal fun rememberProductDetailsState(product: Product): ProductDetailsState 
 
 internal class ProductDetailsState(product: Product) {
     var title by mutableStateOf(product.title)
+    var isDialogConfirmVisible by mutableStateOf(false)
     val isUpdateEnabled by derivedStateOf {
         title.isNotBlank() && title != product.title
     }
@@ -37,12 +38,14 @@ internal class ProductDetailsState(product: Product) {
         fun Saver(product: Product): Saver<ProductDetailsState, Any> = listSaver(
             save = {
                 listOf(
-                    it.title
+                    it.title,
+                    it.isDialogConfirmVisible
                 )
             },
             restore = { value ->
                 ProductDetailsState(product).apply {
-                    title = value[0]
+                    title = value[0] as String
+                    isDialogConfirmVisible = value[1] as Boolean
                 }
             }
         )

@@ -15,6 +15,7 @@ import ui.productdetails.ProductDetailsComponent.Model
 internal class DefaultProductDetailsComponent(
     componentContext: ComponentContext,
     selectedProduct: Product,
+    private val onShowSnackbar: (String) -> Unit,
     private val onUpdated: (Product) -> Unit,
     private val onDeleted: (Product) -> Unit,
 ) : ComponentContext by componentContext, ProductDetailsComponent, KoinComponent {
@@ -35,20 +36,30 @@ internal class DefaultProductDetailsComponent(
 
     private fun delete() {
         scope.launch {
-            val product = state.value.product
-            state.update { it.copy(isLoading = true) }
-            productRepository.deleteProduct(product.id)
-            state.update { it.copy(isLoading = false) }
-            onDeleted(product)
+            try {
+                val product = state.value.product
+                state.update { it.copy(isLoading = true) }
+                productRepository.deleteProduct(product.id)
+                onDeleted(product)
+            } catch (e: Exception) {
+                onShowSnackbar(e.message.orEmpty())
+            } finally {
+                state.update { it.copy(isLoading = false) }
+            }
         }
     }
 
     private fun update(product: Product) {
         scope.launch {
-            state.update { it.copy(isLoading = true) }
-            productRepository.updateProduct(product)
-            state.update { it.copy(isLoading = false) }
-            onUpdated(product)
+            try {
+                state.update { it.copy(isLoading = true) }
+                productRepository.updateProduct(product)
+                onUpdated(product)
+            } catch (e: Exception) {
+                onShowSnackbar(e.message.orEmpty())
+            } finally {
+                state.update { it.copy(isLoading = false) }
+            }
         }
     }
 }

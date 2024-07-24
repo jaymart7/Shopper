@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -15,7 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import common.FullScreenLoading
+import common.LoadingDialog
 
 @Composable
 internal fun ProductDetailsContent(
@@ -40,7 +41,16 @@ private fun ProductDetailsContent(
     state: ProductDetailsState,
     modifier: Modifier = Modifier
 ) {
-    FullScreenLoading(model.isLoading)
+    when {
+        model.isLoading -> LoadingDialog()
+        state.isDialogConfirmVisible -> ConfirmDialog(
+            onDismissRequest = { state.isDialogConfirmVisible = false },
+            onConfirm = {
+                state.isDialogConfirmVisible = false
+                onEvent(ProductDetailsEvent.OnDelete)
+            }
+        )
+    }
 
     Column(modifier = modifier) {
         Column(
@@ -62,7 +72,7 @@ private fun ProductDetailsContent(
         ) {
             TextButton(
                 modifier = Modifier.weight(1f),
-                onClick = { onEvent(ProductDetailsEvent.OnDelete) },
+                onClick = { state.isDialogConfirmVisible = true },
                 content = {
                     Text("Delete")
                 }
@@ -80,4 +90,22 @@ private fun ProductDetailsContent(
             )
         }
     }
+}
+
+@Composable
+private fun ConfirmDialog(
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    AlertDialog(
+        title = { Text("Delete product") },
+        text = { Text("Are you sure you want to delete this product?") },
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = onConfirm) { Text("Yes") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) { Text("No") }
+        },
+    )
 }

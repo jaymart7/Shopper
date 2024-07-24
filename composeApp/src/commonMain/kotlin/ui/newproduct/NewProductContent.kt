@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import common.FullScreenLoading
+import common.LoadingDialog
 
 @Composable
 internal fun NewProductContent(
@@ -36,7 +36,9 @@ private fun NewProductContent(
     model: NewProductComponent.Model,
     modifier: Modifier = Modifier
 ) {
-    FullScreenLoading(model.isLoading)
+    if (model.isLoading) {
+        LoadingDialog()
+    }
 
     Column(modifier = modifier.padding(16.dp)) {
         Column(modifier = Modifier.weight(1f)) {
