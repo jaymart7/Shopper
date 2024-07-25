@@ -5,7 +5,7 @@ import repository.SessionRepository
 
 class WasmPlatform : Platform {
     override val name: String = "Web with Kotlin/Wasm"
-    override val host: String = "http://localhost"
+    override val host: String = "localhost"
 }
 
 actual fun platformModule(): Module =
