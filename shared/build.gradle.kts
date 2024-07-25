@@ -41,6 +41,11 @@ kotlin {
             api(libs.decompose.decompose)
             api(libs.decompose.extensions.compose)
             implementation(libs.essenty.lifecycle.coroutines)
+
+            api(libs.coil.compose)
+            api(libs.coil.compose.core)
+            implementation(libs.coil.network.ktor)
+            implementation(libs.coil.mp)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
