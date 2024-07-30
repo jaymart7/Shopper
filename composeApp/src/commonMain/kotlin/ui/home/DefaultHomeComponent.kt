@@ -8,40 +8,33 @@ import component.componentCoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Product
-import model.response.ApiError
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import repository.AccountRepository
 import repository.ProductRepository
 import ui.home.HomeComponent.Model
 import util.ViewState
 
 internal class DefaultHomeComponent(
     componentContext: ComponentContext,
-    private val onLogout: () -> Unit,
     private val onProductClick: (Product) -> Unit
 ) : ComponentContext by componentContext, HomeComponent, KoinComponent {
 
     private val scope = componentCoroutineScope()
 
-    private val accountRepository by inject<AccountRepository>()
     private val productRepository by inject<ProductRepository>()
 
     private val state = MutableValue(Model())
     override val model: Value<Model> = state
 
     init {
-        fetchAccount()
         fetchProduct()
     }
 
     override fun handleEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.ProductClick -> onProductClick(event.product)
-            is HomeEvent.Logout -> logout()
-            is HomeEvent.RefreshAccount -> fetchAccount()
             is HomeEvent.ClearScroll -> clearScroll()
-            is HomeEvent.RefreshProduct -> fetchAccount()
+            is HomeEvent.RefreshProduct -> fetchProduct()
         }
     }
 
@@ -99,32 +92,6 @@ internal class DefaultHomeComponent(
         return when (val products = state.value.productsState) {
             is ViewState.Success -> products.data
             else -> null
-        }
-    }
-
-    private fun logout() {
-        accountRepository.logout()
-        onLogout()
-    }
-
-    private fun fetchAccount() {
-        if (accountRepository.hasToken().not()) {
-            state.update { it.copy(accountState = AccountState.Login) }
-            return
-        }
-        scope.launch {
-            try {
-                state.update { it.copy(accountState = AccountState.Loading) }
-                val account = accountRepository.getAccount()
-                state.update { it.copy(accountState = AccountState.Success(account)) }
-            } catch (e: Exception) {
-                val accountState = if ((e as? ApiError)?.code == "401") {
-                    AccountState.ExpiredToken
-                } else {
-                    AccountState.Error(e)
-                }
-                state.update { it.copy(accountState = accountState) }
-            }
         }
     }
 

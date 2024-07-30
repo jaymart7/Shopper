@@ -11,8 +11,14 @@ import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
+import component.componentCoroutineScope
+import kotlinx.coroutines.launch
 import model.Product
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import repository.AccountRepository
+import ui.account.AccountComponent
+import ui.account.DefaultAccountComponent
 import ui.home.DefaultHomeComponent
 import ui.home.HomeComponent
 import ui.login.DefaultLoginComponent
@@ -22,6 +28,7 @@ import ui.newproduct.NewProductComponent
 import ui.productdetails.DefaultProductDetailsComponent
 import ui.productdetails.ProductDetailsComponent
 import ui.root.RootComponent.Child
+import ui.root.RootComponent.Child.Account
 import ui.root.RootComponent.Child.Home
 import ui.root.RootComponent.Child.Login
 import ui.root.RootComponent.Child.NewProduct
@@ -33,10 +40,33 @@ internal class DefaultRootComponent(
     componentContext: ComponentContext,
 ) : RootComponent, ComponentContext by componentContext, KoinComponent {
 
+    private val scope = componentCoroutineScope()
+
+    private val accountRepository by inject<AccountRepository>()
+
     private val navigation = StackNavigation<Config>()
 
     private val state = MutableValue(Model())
     override val model: Value<Model> = state
+
+    override fun handleEvent(event: RootEvent) {
+        when (event) {
+            RootEvent.OnAccount -> navigation.push(Config.Account)
+            RootEvent.OnBack -> navigation.pop()
+            RootEvent.OnClearSnackbar -> state.update { it.copy(snackBarMessage = null) }
+            RootEvent.OnFabClick -> navigation.push(Config.NewProduct)
+            RootEvent.OnNavigateToLogin -> navigateToLogin()
+        }
+    }
+
+    init {
+        fetchAccount()
+    }
+
+    private fun navigateToLogin() {
+        accountRepository.logout()
+        navigation.replaceAll(Config.Login)
+    }
 
     override val stack: Value<ChildStack<*, Child>> =
         childStack(
@@ -67,6 +97,12 @@ internal class DefaultRootComponent(
                 componentContext = childComponentContext
             )
         )
+
+        is Config.Account -> Account(
+            accountComponent(
+                componentContext = childComponentContext
+            )
+        )
     }
 
     private fun loginComponent(
@@ -74,13 +110,15 @@ internal class DefaultRootComponent(
     ): LoginComponent =
         DefaultLoginComponent(
             componentContext = componentContext,
-            onLoggedIn = { navigation.replaceAll(Config.Home) },
+            onLoggedIn = {
+                navigation.replaceAll(Config.Home)
+                fetchAccount()
+            },
         )
 
     private fun homeComponent(componentContext: ComponentContext): HomeComponent =
         DefaultHomeComponent(
             componentContext = componentContext,
-            onLogout = { navigation.replaceAll(Config.Login) },
             onProductClick = { navigation.push(Config.ProductDetails(it)) }
         )
 
@@ -93,13 +131,13 @@ internal class DefaultRootComponent(
             selectedProduct = product,
             onShowSnackbar = ::showSnackbar,
             onUpdated = { updatedProduct ->
-                onBackClicked()
+                navigation.pop()
                 val homeComponent = (stack.active.instance as? Home)?.component
                 homeComponent?.update(updatedProduct)
                 showSnackbar("Updated: ${updatedProduct.title}")
             },
             onDeleted = { deletedProduct ->
-                onBackClicked()
+                navigation.pop()
                 val homeComponent = (stack.active.instance as? Home)?.component
                 homeComponent?.delete(deletedProduct.id)
                 showSnackbar("Deleted: ${product.title}")
@@ -111,25 +149,36 @@ internal class DefaultRootComponent(
     ): NewProductComponent = DefaultNewProductComponent(
         componentContext = componentContext,
         onAdded = { newProduct ->
-            onBackClicked()
+            navigation.pop()
             (stack.active.instance as? Home)?.component?.add(newProduct)
             showSnackbar("Added: ${newProduct.title}")
         }
+    )
+
+    private fun accountComponent(
+        componentContext: ComponentContext
+    ): AccountComponent = DefaultAccountComponent(
+        componentContext = componentContext,
+        onNavigateToLogin = { navigateToLogin() }
     )
 
     private fun showSnackbar(message: String) {
         state.update { it.copy(snackBarMessage = message) }
     }
 
-    override fun onFabClicked() {
-        navigation.push(Config.NewProduct)
-    }
-
-    override fun clearSnackbar() {
-        state.update { it.copy(snackBarMessage = null) }
-    }
-
-    override fun onBackClicked() {
-        navigation.pop()
+    private fun fetchAccount() {
+        if (accountRepository.hasToken().not()) {
+            state.update { it.copy(accountState = AccountState.Login) }
+            return
+        }
+        scope.launch {
+            try {
+                state.update { it.copy(accountState = AccountState.Loading) }
+                val account = accountRepository.getAccount()
+                state.update { it.copy(accountState = AccountState.Success(account)) }
+            } catch (e: Exception) {
+                state.update { it.copy(accountState = AccountState.Error(e)) }
+            }
+        }
     }
 }

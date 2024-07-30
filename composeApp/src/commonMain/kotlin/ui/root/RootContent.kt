@@ -1,5 +1,6 @@
 package ui.root
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -18,6 +21,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +36,8 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.arkivanov.decompose.router.stack.ChildStack
+import ui.account.AccountContent
 import ui.home.HomeContent
 import ui.login.LoginContent
 import ui.newproduct.NewProductContent
@@ -58,60 +64,81 @@ internal fun RootContent(
     model.snackBarMessage?.let {
         LaunchedEffect(it) {
             snackbarHostState.showSnackbar(it)
-            component.clearSnackbar()
+            component.handleEvent(RootEvent.OnClearSnackbar)
         }
     }
 
     MaterialTheme {
         Surface(modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars)) {
-            Scaffold(
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-                modifier = modifier,
-                topBar = {
-                    TopAppBar(
-                        onBack = component::onBackClicked,
-                        title = stack.active.instance.getTitle(),
-                        hasBackStack = stack.backStack.isNotEmpty()
-                    )
-                },
-                content = { innerPadding ->
-                    Children(
-                        stack = stack,
-                        modifier = Modifier.padding(innerPadding),
-                        animation = stackAnimation(fade() + scale())
-                    ) {
-                        when (val instance = it.instance) {
-                            is Child.Login -> LoginContent(component = instance.component)
-                            is Child.Home -> HomeContent(component = instance.component)
-                            is Child.ProductDetails -> ProductDetailsContent(instance.component)
-                            is Child.NewProduct -> NewProductContent(component = instance.component)
-                        }
-                    }
-                },
-                floatingActionButton = {
-                    if (stack.active.instance.isFabVisible()) {
-                        FloatingActionButton(
-                            onClick = component::onFabClicked,
-                            content = {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Add"
-                                )
-                            }
-                        )
-                    }
-                }
+            RootContent(
+                onEvent = component::handleEvent,
+                model = model,
+                stack = stack,
+                snackbarHostState = snackbarHostState,
             )
         }
     }
+}
+
+@Composable
+private fun RootContent(
+    onEvent: (RootEvent) -> Unit,
+    model: RootComponent.Model,
+    snackbarHostState: SnackbarHostState,
+    stack: ChildStack<*, Child>,
+    modifier: Modifier = Modifier
+) {
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                onEvent = onEvent,
+                title = stack.active.instance.getTitle(),
+                isActionsVisible = stack.active.instance.isActionsVisible(),
+                accountState = model.accountState,
+                hasBackStack = stack.backStack.isNotEmpty()
+            )
+        },
+        content = { innerPadding ->
+            Children(
+                stack = stack,
+                modifier = Modifier.padding(innerPadding),
+                animation = stackAnimation(fade() + scale())
+            ) {
+                when (val instance = it.instance) {
+                    is Child.Login -> LoginContent(component = instance.component)
+                    is Child.Home -> HomeContent(component = instance.component)
+                    is Child.ProductDetails -> ProductDetailsContent(instance.component)
+                    is Child.NewProduct -> NewProductContent(component = instance.component)
+                    is Child.Account -> AccountContent(component = instance.component)
+                }
+            }
+        },
+        floatingActionButton = {
+            if (stack.active.instance.isFabVisible()) {
+                FloatingActionButton(
+                    onClick = { onEvent(RootEvent.OnFabClick) },
+                    content = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add"
+                        )
+                    }
+                )
+            }
+        }
+    )
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopAppBar(
-    onBack: () -> Unit,
+    onEvent: (RootEvent) -> Unit,
+    accountState: AccountState,
     title: String,
+    isActionsVisible: Boolean,
     hasBackStack: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -123,10 +150,19 @@ private fun TopAppBar(
                 style = MaterialTheme.typography.titleMedium
             )
         },
+        actions = {
+            if (isActionsVisible) {
+                ToolbarActionContent(
+                    onAccount = { onEvent(RootEvent.OnAccount) },
+                    onLogin = { onEvent(RootEvent.OnNavigateToLogin) },
+                    accountState = accountState
+                )
+            }
+        },
         navigationIcon = {
             if (hasBackStack) {
                 IconButton(
-                    onClick = onBack,
+                    onClick = { onEvent(RootEvent.OnBack) },
                     content = {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -137,4 +173,47 @@ private fun TopAppBar(
             }
         }
     )
+}
+
+
+@Composable
+private fun ToolbarActionContent(
+    onAccount: () -> Unit,
+    onLogin: () -> Unit,
+    accountState: AccountState,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        when (accountState) {
+            is AccountState.TokenExpired,
+            is AccountState.Error -> {
+                IconButton(
+                    onClick = onAccount,
+                    content = {
+                        Icon(
+                            imageVector = Icons.Filled.Error,
+                            contentDescription = "Account error"
+                        )
+                    }
+                )
+            }
+
+            is AccountState.Loading -> CircularProgressIndicator()
+
+            is AccountState.Success -> {
+                TextButton(
+                    onClick = onAccount,
+                ) {
+                    Text(accountState.account.name)
+                }
+            }
+
+            is AccountState.Login -> TextButton(
+                onClick = onLogin,
+                content = {
+                    Text("Login")
+                }
+            )
+        }
+    }
 }

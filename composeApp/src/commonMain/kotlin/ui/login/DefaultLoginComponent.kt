@@ -24,7 +24,6 @@ internal class DefaultLoginComponent(
     override val model: Value<Model> = state
 
     override fun onUpdateUsername(value: String) {
-
         state.update { it.copy(username = value) }
         updateLoginButtonState()
     }

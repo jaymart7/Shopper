@@ -51,9 +51,6 @@ private fun createHttpClient(
 
                     is ClientRequestException -> {
                         val apiError = exception.response.body<ApiError>()
-                        if (apiError.code == "401") {
-                            sessionRepository.clearSession()
-                        }
                         throw apiError
                     }
 

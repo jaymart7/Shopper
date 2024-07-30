@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,8 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import common.NetworkImage
 import model.Product
-import model.presentation.Account
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import util.ViewState
 import util.getRandomImageUrl
@@ -69,18 +65,7 @@ private fun HomeContent(
         }
     }
 
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        AccountContent(
-            onRefresh = { onEvent(HomeEvent.RefreshAccount) },
-            onLogout = { onEvent(HomeEvent.Logout) },
-            accountState = model.accountState
-        )
-
-        HorizontalDivider()
-
+    Column(modifier = modifier) {
         ProductContent(
             lazyListState = lazyListState,
             onItemClick = { onEvent(HomeEvent.ProductClick(it)) },
@@ -88,69 +73,6 @@ private fun HomeContent(
             productsState = model.productsState,
             modifier = Modifier.weight(1f)
         )
-    }
-}
-
-@Composable
-private fun AccountContent(
-    onRefresh: () -> Unit,
-    onLogout: () -> Unit,
-    accountState: AccountState,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-    ) {
-        when (accountState) {
-            is AccountState.Error -> {
-                Text(
-                    accountState.error.message.orEmpty(),
-                    modifier = Modifier.weight(1f),
-                    maxLines = 1
-                )
-
-                Button(
-                    onClick = onRefresh,
-                    content = {
-                        Text("Retry")
-                    }
-                )
-            }
-
-            is AccountState.Loading -> CircularProgressIndicator()
-
-            is AccountState.Success -> {
-                Text(
-                    text = accountState.account.name,
-                    maxLines = 1
-                )
-
-                OutlinedButton(
-                    onClick = onLogout,
-                    content = {
-                        Text("Logout")
-                    }
-                )
-            }
-
-            is AccountState.ExpiredToken -> OutlinedButton(
-                onClick = onLogout,
-                content = {
-                    Text("Logout")
-                }
-            )
-
-            is AccountState.Login -> OutlinedButton(
-                onClick = onLogout,
-                content = {
-                    Text("Login")
-                }
-            )
-        }
     }
 }
 
@@ -241,12 +163,9 @@ private fun ProductItem(
 @Composable
 @Preview
 fun HomeScreenPreview() {
-    val account = Account(name = "Name", username = "user name")
-
     HomeContent(
         onEvent = {},
         model = HomeComponent.Model(
-            accountState = AccountState.Success(account),
             productsState = ViewState.Success(
                 listOf(
                     Product(1, "Product 1"),
