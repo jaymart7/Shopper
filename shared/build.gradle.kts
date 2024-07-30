@@ -50,13 +50,13 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android.driver)
-            implementation(libs.slf4j.android)
+            implementation(libs.slf4j)
         }
         jvmMain.dependencies {
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.cio)
-            implementation(libs.slf4j)
             implementation(libs.sqldelight.sqlite.driver)
+            implementation(libs.slf4j)
         }
         jsMain.dependencies {
             implementation(libs.ktor.client.js)
