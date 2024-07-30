@@ -7,7 +7,6 @@ androidx-activityCompose = "1.9.1"
 compose-plugin = "1.6.11"
 kotlin = "2.0.0"
 ktor = "3.0.0-beta-2"
-logback = "1.5.6"
 coroutines = "1.8.1"
 slf4j = "2.0.13"
 sqlDelight = "2.0.2"
@@ -31,7 +30,6 @@ decompose-decompose = { module = "com.arkivanov.decompose:decompose", version.re
 decompose-extensions-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 essenty-lifecycle-coroutines = { module = "com.arkivanov.essenty:lifecycle-coroutines", version.ref = "essenty" }
 
-kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
