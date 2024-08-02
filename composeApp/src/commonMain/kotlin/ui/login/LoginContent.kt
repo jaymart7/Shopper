@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -13,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import common.ButtonWithLoading
@@ -55,7 +57,7 @@ private fun LoginContent(
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {
         Text(
-            text = stringResource(Res.string.login),
+            text = "Welcome!",
             style = MaterialTheme.typography.bodyLarge
         )
 
@@ -64,7 +66,9 @@ private fun LoginContent(
             value = model.username,
             enabled = model.isLoading.not(),
             onValueChange = onUpdateUsername,
-            label = { Text(stringResource(Res.string.username)) }
+            label = { Text(stringResource(Res.string.username)) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
 
         TextField(
@@ -72,7 +76,9 @@ private fun LoginContent(
             value = model.password,
             enabled = model.isLoading.not(),
             onValueChange = onUpdatePassword,
-            label = { Text(stringResource(Res.string.password)) }
+            label = { Text(stringResource(Res.string.password)) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         )
 
         ButtonWithLoading(

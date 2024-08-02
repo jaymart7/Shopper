@@ -14,7 +14,7 @@ internal fun Child.isFabVisible(): Boolean {
 internal fun Child.getTitle(): String {
     return when (this) {
         is Home -> "Home"
-        is Login -> "Login"
+        is Login -> ""
         is NewProduct -> "New Product"
         is ProductDetails -> "Product Details"
         is Account -> "Account"
