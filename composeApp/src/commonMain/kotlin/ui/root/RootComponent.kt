@@ -10,6 +10,7 @@ import ui.home.HomeComponent
 import ui.login.LoginComponent
 import ui.newproduct.NewProductComponent
 import ui.productdetails.ProductDetailsComponent
+import ui.signup.SignUpComponent
 
 internal interface RootComponent {
 
@@ -25,6 +26,7 @@ internal interface RootComponent {
         class ProductDetails(val component: ProductDetailsComponent) : Child()
         class NewProduct(val component: NewProductComponent) : Child()
         class Account(val component: AccountComponent) : Child()
+        class SignUp(val component: SignUpComponent) : Child()
     }
 
     data class Model(
@@ -49,6 +51,9 @@ internal interface RootComponent {
 
         @Serializable
         data object Account : Config
+
+        @Serializable
+        data object SignUp : Config
     }
 }
 

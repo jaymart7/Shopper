@@ -3,9 +3,12 @@ package ui.account
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,39 +37,46 @@ private fun AccountContent(
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
+        horizontalAlignment = Alignment.End
     ) {
-        when (val accountState = model.accountState) {
-            is AccountState.Error -> {
-                Text(accountState.error.message.orEmpty())
-                Button(
-                    onClick = { onEvent(AccountEvent.OnRefresh) },
-                    content = { Text("Refresh") }
-                )
-            }
+        Column(
+            modifier = modifier.weight(1f).fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
+        ) {
+            when (val accountState = model.accountState) {
+                is AccountState.Error -> {
+                    Text(accountState.error.message.orEmpty())
+                    Button(
+                        onClick = { onEvent(AccountEvent.OnRefresh) },
+                        content = { Text("Refresh") }
+                    )
+                }
 
-            is AccountState.Loading -> CircularProgressIndicator()
-            is AccountState.Login -> Button(
-                onClick = { onEvent(AccountEvent.OnNavigateToLogin) },
-                content = { Text("Login") }
-            )
-
-            is AccountState.Success -> {
-                Text(accountState.account.name)
-                Button(
+                is AccountState.Loading -> CircularProgressIndicator()
+                is AccountState.Login -> Button(
                     onClick = { onEvent(AccountEvent.OnNavigateToLogin) },
-                    content = { Text("Logout") }
+                    content = { Text("Login") }
                 )
-            }
 
-            is AccountState.TokenExpired -> {
-                Text(accountState.error.message.orEmpty())
-                Button(
-                    onClick = { onEvent(AccountEvent.OnNavigateToLogin) },
-                    content = { Text("Logout") }
-                )
+                is AccountState.Success -> {
+                    Text(accountState.account.name)
+                }
+
+                is AccountState.TokenExpired -> {
+                    Text(accountState.error.message.orEmpty())
+                    Button(
+                        onClick = { onEvent(AccountEvent.OnNavigateToLogin) },
+                        content = { Text("Logout") }
+                    )
+                }
             }
         }
+
+        TextButton(
+            modifier = Modifier.padding(16.dp),
+            onClick = { onEvent(AccountEvent.OnNavigateToLogin) },
+            content = { Text("Logout") }
+        )
     }
 }

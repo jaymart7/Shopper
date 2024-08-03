@@ -5,14 +5,16 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
 import model.mapper.toAccount
 import model.presentation.Account
+import model.request.AccountRequest
 import model.request.LoginRequest
 import model.response.AccountResponse
 import model.response.TokenResponse
 
 interface AccountRepository {
+
+    suspend fun signUp(accountRequest: AccountRequest)
 
     suspend fun login(username: String, password: String)
 
@@ -27,6 +29,12 @@ class AccountRepositoryImpl(
     private val sessionRepository: SessionRepository,
     private val httpClient: HttpClient
 ) : AccountRepository {
+
+    override suspend fun signUp(accountRequest: AccountRequest) {
+        httpClient.post("register") {
+            setBody(accountRequest)
+        }
+    }
 
     override suspend fun login(
         username: String,

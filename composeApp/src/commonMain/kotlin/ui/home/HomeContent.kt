@@ -85,22 +85,20 @@ fun ProductContent(
     productsState: ViewState<List<Product>>,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.fillMaxSize()) {
         when (productsState) {
-            is ViewState.Error -> {
-                Text(
-                    productsState.error.message.orEmpty(),
-                    textAlign = TextAlign.Center
-                )
-                Button(
-                    onClick = onRefresh,
-                    content = {
-                        Text("Refresh")
-                    }
-                )
-            }
+            is ViewState.Error -> ErrorContent(
+                onRefresh = onRefresh,
+                errorMessage = productsState.error.message.orEmpty()
+            )
 
-            is ViewState.Loading -> CircularProgressIndicator()
+            is ViewState.Loading -> Column(
+                modifier = modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
+            }
 
             is ViewState.Success -> {
                 LazyVerticalGrid(
@@ -125,6 +123,30 @@ fun ProductContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ErrorContent(
+    onRefresh: () -> Unit,
+    errorMessage: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
+    ) {
+        Text(
+            errorMessage,
+            textAlign = TextAlign.Center
+        )
+        Button(
+            onClick = onRefresh,
+            content = {
+                Text("Refresh")
+            }
+        )
     }
 }
 

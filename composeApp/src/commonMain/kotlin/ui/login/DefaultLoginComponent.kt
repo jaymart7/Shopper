@@ -13,7 +13,8 @@ import ui.login.LoginComponent.Model
 
 internal class DefaultLoginComponent(
     componentContext: ComponentContext,
-    private val onLoggedIn: () -> Unit
+    private val onLoggedIn: () -> Unit,
+    private val onSignUp: () -> Unit
 ) : ComponentContext by componentContext, LoginComponent, KoinComponent {
 
     private val scope = componentCoroutineScope()
@@ -23,12 +24,21 @@ internal class DefaultLoginComponent(
     private val state = MutableValue(Model())
     override val model: Value<Model> = state
 
-    override fun onUpdateUsername(value: String) {
+    override fun handleEvent(event: LoginEvent) {
+        when (event) {
+            is LoginEvent.Login -> login()
+            is LoginEvent.OnUpdatePassword -> onUpdatePassword(event.value)
+            is LoginEvent.OnUpdateUserName -> onUpdateUsername(event.value)
+            is LoginEvent.SignUp -> onSignUp()
+        }
+    }
+
+    private fun onUpdateUsername(value: String) {
         state.update { it.copy(username = value) }
         updateLoginButtonState()
     }
 
-    override fun onUpdatePassword(value: String) {
+    private fun onUpdatePassword(value: String) {
         state.update { it.copy(password = value) }
         updateLoginButtonState()
     }
@@ -41,7 +51,7 @@ internal class DefaultLoginComponent(
         }
     }
 
-    override fun login() {
+    fun login() {
         scope.launch {
             state.update {
                 it.copy(

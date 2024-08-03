@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -17,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import common.ButtonWithLoading
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import shopper.composeapp.generated.resources.Res
@@ -33,9 +34,7 @@ internal fun LoginContent(
     val model by component.model.subscribeAsState()
 
     LoginContent(
-        onUpdateUsername = component::onUpdateUsername,
-        onUpdatePassword = component::onUpdatePassword,
-        onLogin = component::login,
+        onEvent = { component.handleEvent(it) },
         model = model,
         modifier = modifier
     )
@@ -43,9 +42,7 @@ internal fun LoginContent(
 
 @Composable
 private fun LoginContent(
-    onUpdateUsername: (String) -> Unit,
-    onUpdatePassword: (String) -> Unit,
-    onLogin: () -> Unit,
+    onEvent: (LoginEvent) -> Unit,
     model: LoginComponent.Model,
     modifier: Modifier = Modifier
 ) {
@@ -65,7 +62,7 @@ private fun LoginContent(
             modifier = Modifier.fillMaxWidth(),
             value = model.username,
             enabled = model.isLoading.not(),
-            onValueChange = onUpdateUsername,
+            onValueChange = { onEvent(LoginEvent.OnUpdateUserName(it)) },
             label = { Text(stringResource(Res.string.username)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -75,18 +72,23 @@ private fun LoginContent(
             modifier = Modifier.fillMaxWidth(),
             value = model.password,
             enabled = model.isLoading.not(),
-            onValueChange = onUpdatePassword,
+            onValueChange = { onEvent(LoginEvent.OnUpdatePassword(it)) },
             label = { Text(stringResource(Res.string.password)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         )
 
-        ButtonWithLoading(
+        Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = onLogin,
+            onClick = { onEvent(LoginEvent.Login) },
             enabled = model.isLoginEnabled,
-            isLoading = model.isLoading,
             content = { Text(stringResource(Res.string.login)) }
+        )
+
+        OutlinedButton(
+            modifier = Modifier.fillMaxWidth(),
+            content = { Text("Sign up") },
+            onClick = { onEvent(LoginEvent.SignUp) }
         )
 
         Text(model.loginError.orEmpty(), color = Color.Red)
@@ -97,9 +99,7 @@ private fun LoginContent(
 @Composable
 fun LoginScreenPreview() {
     LoginContent(
-        onUpdateUsername = {},
-        onUpdatePassword = {},
-        onLogin = {},
+        onEvent = {},
         model = LoginComponent.Model()
     )
 }

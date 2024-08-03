@@ -5,12 +5,6 @@ import com.arkivanov.decompose.value.Value
 internal interface LoginComponent {
     val model: Value<Model>
 
-    fun onUpdateUsername(value: String)
-
-    fun onUpdatePassword(value: String)
-
-    fun login()
-
     data class Model(
         val username: String = "",
         val password: String = "",
@@ -18,4 +12,13 @@ internal interface LoginComponent {
         val isLoginEnabled: Boolean = false,
         val loginError: String? = null
     )
+
+    fun handleEvent(event: LoginEvent)
+}
+
+internal sealed class LoginEvent {
+    data class OnUpdateUserName(val value: String) : LoginEvent()
+    data class OnUpdatePassword(val value: String) : LoginEvent()
+    data object Login : LoginEvent()
+    data object SignUp : LoginEvent()
 }

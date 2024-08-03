@@ -4,6 +4,7 @@ import ui.root.RootComponent.Child
 import ui.root.RootComponent.Child.Account
 import ui.root.RootComponent.Child.Home
 import ui.root.RootComponent.Child.Login
+import ui.root.RootComponent.Child.SignUp
 import ui.root.RootComponent.Child.NewProduct
 import ui.root.RootComponent.Child.ProductDetails
 
@@ -18,9 +19,10 @@ internal fun Child.getTitle(): String {
         is NewProduct -> "New Product"
         is ProductDetails -> "Product Details"
         is Account -> "Account"
+        is SignUp -> "SignUp"
     }
 }
 
 internal fun Child.isActionsVisible(): Boolean {
-    return this !is Login && this !is Account
+    return this !is Login && this !is Account && this !is SignUp
 }

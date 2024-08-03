@@ -33,8 +33,11 @@ import ui.root.RootComponent.Child.Home
 import ui.root.RootComponent.Child.Login
 import ui.root.RootComponent.Child.NewProduct
 import ui.root.RootComponent.Child.ProductDetails
+import ui.root.RootComponent.Child.SignUp
 import ui.root.RootComponent.Config
 import ui.root.RootComponent.Model
+import ui.signup.DefaultSignUpComponent
+import ui.signup.SignUpComponent
 
 internal class DefaultRootComponent(
     componentContext: ComponentContext,
@@ -93,15 +96,15 @@ internal class DefaultRootComponent(
         )
 
         is Config.NewProduct -> NewProduct(
-            newProductComponent(
-                componentContext = childComponentContext
-            )
+            newProductComponent(childComponentContext)
         )
 
         is Config.Account -> Account(
-            accountComponent(
-                componentContext = childComponentContext
-            )
+            accountComponent(childComponentContext)
+        )
+
+        Config.SignUp -> SignUp(
+            signUpComponent(childComponentContext)
         )
     }
 
@@ -114,6 +117,7 @@ internal class DefaultRootComponent(
                 navigation.replaceAll(Config.Home)
                 fetchAccount()
             },
+            onSignUp = { navigation.push(Config.SignUp) }
         )
 
     private fun homeComponent(componentContext: ComponentContext): HomeComponent =
@@ -160,6 +164,16 @@ internal class DefaultRootComponent(
     ): AccountComponent = DefaultAccountComponent(
         componentContext = componentContext,
         onNavigateToLogin = { navigateToLogin() }
+    )
+
+    private fun signUpComponent(
+        componentContext: ComponentContext
+    ): SignUpComponent = DefaultSignUpComponent(
+        componentContext = componentContext,
+        onSignUpSuccess = {
+            navigation.pop()
+            showSnackbar("Signed up successfully")
+        }
     )
 
     private fun showSnackbar(message: String) {

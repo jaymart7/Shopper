@@ -1,20 +1,23 @@
 package ui.root
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -28,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.setSingletonImageLoaderFactory
 import com.arkivanov.decompose.extensions.compose.stack.Children
@@ -43,6 +47,7 @@ import ui.login.LoginContent
 import ui.newproduct.NewProductContent
 import ui.productdetails.ProductDetailsContent
 import ui.root.RootComponent.Child
+import ui.signup.SignUpContent
 import util.getAsyncImageLoader
 
 @OptIn(ExperimentalCoilApi::class)
@@ -112,6 +117,7 @@ private fun RootContent(
                     is Child.ProductDetails -> ProductDetailsContent(instance.component)
                     is Child.NewProduct -> NewProductContent(component = instance.component)
                     is Child.Account -> AccountContent(component = instance.component)
+                    is Child.SignUp -> SignUpContent(component = instance.component)
                 }
             }
         },
@@ -183,7 +189,7 @@ private fun ToolbarActionContent(
     accountState: AccountState,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(horizontal = 16.dp)) {
         when (accountState) {
             is AccountState.TokenExpired,
             is AccountState.Error -> {
@@ -198,7 +204,12 @@ private fun ToolbarActionContent(
                 )
             }
 
-            is AccountState.Loading -> CircularProgressIndicator()
+            is AccountState.Loading -> LinearProgressIndicator(
+                modifier = Modifier
+                    .width(32.dp)
+                    .height(16.dp)
+                    .clickable { onAccount() }
+            )
 
             is AccountState.Success -> {
                 TextButton(
