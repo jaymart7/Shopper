@@ -65,7 +65,7 @@ internal class DefaultRootComponent(
 
     private fun navigateToLogin() {
         accountRepository.logout()
-        navigation.replaceAll(Config.Login)
+        navigation.push(Config.Login)
     }
 
     override val stack: Value<ChildStack<*, Child>> =
