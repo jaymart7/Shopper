@@ -1,9 +1,14 @@
 package repository
 
 import io.ktor.client.HttpClient
-import kotlinx.coroutines.delay
+import io.ktor.client.call.body
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
 import model.Product
-import kotlin.random.Random
+import model.request.ProductRequest
 
 interface ProductRepository {
 
@@ -20,29 +25,30 @@ class ProductRepositoryImpl(
     private val httpClient: HttpClient
 ) : ProductRepository {
 
-    override suspend fun getProduct(): List<Product> {
-        // TODO
-        val a = mutableListOf<Product>()
-        for (i in 1..100) {
-            a.add(Product(i, "pr $i"))
-        }
+    companion object {
+        private const val URL_PRODUCTS = "products"
+    }
 
-        return a
+    override suspend fun getProduct(): List<Product> {
+        val response = httpClient.get(URL_PRODUCTS)
+        val product = response.body<List<Product>>()
+        return product
     }
 
     override suspend fun updateProduct(product: Product) {
-        delay(1000)
-        // TODO
+        httpClient.put("$URL_PRODUCTS/${product.id}") {
+            setBody(ProductRequest(product.title))
+        }
     }
 
     override suspend fun deleteProduct(id: Int) {
-        delay(1000)
-        //TODO
+        httpClient.delete("$URL_PRODUCTS/$id")
     }
 
     override suspend fun addProduct(title: String): Int {
-        delay(1000)
-        //TODO
-        return Random.nextInt(101, 1000)
+        val response = httpClient.post(URL_PRODUCTS) {
+            setBody(ProductRequest(title))
+        }
+        return response.body<Int>()
     }
 }
