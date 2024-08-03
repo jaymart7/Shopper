@@ -16,7 +16,7 @@ interface AccountRepository {
 
     suspend fun signUp(accountRequest: AccountRequest)
 
-    suspend fun login(username: String, password: String)
+    suspend fun login(loginRequest: LoginRequest)
 
     suspend fun getAccount(): Account
 
@@ -36,12 +36,9 @@ class AccountRepositoryImpl(
         }
     }
 
-    override suspend fun login(
-        username: String,
-        password: String
-    ) {
+    override suspend fun login(loginRequest: LoginRequest) {
         val response = httpClient.post("login") {
-            setBody(LoginRequest(username, password))
+            setBody(loginRequest)
         }
         val token: TokenResponse = response.body()
         sessionRepository.setToken(token.token)

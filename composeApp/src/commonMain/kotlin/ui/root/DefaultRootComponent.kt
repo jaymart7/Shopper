@@ -151,6 +151,7 @@ internal class DefaultRootComponent(
     private fun newProductComponent(
         componentContext: ComponentContext
     ): NewProductComponent = DefaultNewProductComponent(
+        onShowSnackbar = { showSnackbar(it) },
         componentContext = componentContext,
         onAdded = { newProduct ->
             navigation.pop()
@@ -170,6 +171,7 @@ internal class DefaultRootComponent(
         componentContext: ComponentContext
     ): SignUpComponent = DefaultSignUpComponent(
         componentContext = componentContext,
+        onShowSnackbar = { showSnackbar(it) },
         onSignUpSuccess = {
             navigation.pop()
             showSnackbar("Signed up successfully")

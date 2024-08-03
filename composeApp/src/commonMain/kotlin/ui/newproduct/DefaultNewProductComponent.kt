@@ -14,6 +14,7 @@ import ui.newproduct.NewProductComponent.Model
 
 internal class DefaultNewProductComponent(
     componentContext: ComponentContext,
+    private val onShowSnackbar: (String) -> Unit,
     private val onAdded: (Product) -> Unit
 ) : ComponentContext by componentContext, NewProductComponent, KoinComponent {
 
@@ -33,14 +34,19 @@ internal class DefaultNewProductComponent(
     private fun add(title: String) {
         scope.launch {
             state.update { it.copy(isLoading = true) }
-            val productId = productRepository.addProduct(title)
-            state.update { it.copy(isLoading = false) }
-            onAdded(
-                Product(
-                    id = productId,
-                    title = title
+            try {
+                val productId = productRepository.addProduct(title)
+                onAdded(
+                    Product(
+                        id = productId,
+                        title = title
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                onShowSnackbar(e.message.orEmpty())
+            } finally {
+                state.update { it.copy(isLoading = false) }
+            }
         }
     }
 }

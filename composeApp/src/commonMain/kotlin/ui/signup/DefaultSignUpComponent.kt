@@ -14,8 +14,9 @@ import ui.signup.SignUpComponent.Model
 
 internal class DefaultSignUpComponent(
     componentContext: ComponentContext,
+    private val onShowSnackbar: (String) -> Unit,
     private val onSignUpSuccess: () -> Unit
-): SignUpComponent, ComponentContext by componentContext, KoinComponent {
+) : SignUpComponent, ComponentContext by componentContext, KoinComponent {
 
     private val accountRepository by inject<AccountRepository>()
 
@@ -33,9 +34,14 @@ internal class DefaultSignUpComponent(
     private fun signUp(accountRequest: AccountRequest) {
         scope.launch {
             state.update { it.copy(isLoading = true) }
-            accountRepository.signUp(accountRequest)
-            state.update { it.copy(isLoading = false) }
-            onSignUpSuccess()
+            try {
+                accountRepository.signUp(accountRequest)
+                onSignUpSuccess()
+            } catch (e: Exception) {
+                onShowSnackbar(e.message.orEmpty())
+            } finally {
+                state.update { it.copy(isLoading = false) }
+            }
         }
     }
 }

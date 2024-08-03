@@ -6,6 +6,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import component.componentCoroutineScope
 import kotlinx.coroutines.launch
+import model.request.LoginRequest
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.AccountRepository
@@ -26,49 +27,27 @@ internal class DefaultLoginComponent(
 
     override fun handleEvent(event: LoginEvent) {
         when (event) {
-            is LoginEvent.Login -> login()
-            is LoginEvent.OnUpdatePassword -> onUpdatePassword(event.value)
-            is LoginEvent.OnUpdateUserName -> onUpdateUsername(event.value)
+            is LoginEvent.Login -> login(event.loginRequest)
             is LoginEvent.SignUp -> onSignUp()
         }
     }
 
-    private fun onUpdateUsername(value: String) {
-        state.update { it.copy(username = value) }
-        updateLoginButtonState()
-    }
-
-    private fun onUpdatePassword(value: String) {
-        state.update { it.copy(password = value) }
-        updateLoginButtonState()
-    }
-
-    private fun updateLoginButtonState() {
-        state.update {
-            it.copy(
-                isLoginEnabled = it.username.isNotBlank() && it.password.isNotBlank()
-            )
-        }
-    }
-
-    fun login() {
+    fun login(loginRequest: LoginRequest) {
         scope.launch {
             state.update {
                 it.copy(
                     isLoading = true,
-                    loginError = null,
-                    isLoginEnabled = false
+                    loginError = null
                 )
             }
             try {
-                accountRepository.login(model.value.username, model.value.password)
+                accountRepository.login(loginRequest)
                 onLoggedIn()
             } catch (e: Exception) {
                 state.update {
                     it.copy(
                         loginError = e.message.orEmpty(),
-                        isLoading = false,
-                        isLoginEnabled = true
+                        isLoading = false
                     )
                 }
             }

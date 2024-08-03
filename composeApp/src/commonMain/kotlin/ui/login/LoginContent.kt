@@ -2,13 +2,15 @@ package ui.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -19,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import common.LoadingDialog
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import shopper.composeapp.generated.resources.Res
@@ -32,10 +35,12 @@ internal fun LoginContent(
     modifier: Modifier = Modifier
 ) {
     val model by component.model.subscribeAsState()
+    val loginState = rememberLoginState()
 
     LoginContent(
         onEvent = { component.handleEvent(it) },
         model = model,
+        state = loginState,
         modifier = modifier
     )
 }
@@ -44,8 +49,13 @@ internal fun LoginContent(
 private fun LoginContent(
     onEvent: (LoginEvent) -> Unit,
     model: LoginComponent.Model,
+    state: LoginState,
     modifier: Modifier = Modifier
 ) {
+    if (model.isLoading) {
+        LoadingDialog()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -55,14 +65,16 @@ private fun LoginContent(
     ) {
         Text(
             text = "Welcome!",
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.headlineMedium
         )
+
+        Spacer(Modifier.height(16.dp))
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = model.username,
+            value = state.username,
             enabled = model.isLoading.not(),
-            onValueChange = { onEvent(LoginEvent.OnUpdateUserName(it)) },
+            onValueChange = { state.username = it },
             label = { Text(stringResource(Res.string.username)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -70,28 +82,28 @@ private fun LoginContent(
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = model.password,
+            value = state.password,
             enabled = model.isLoading.not(),
-            onValueChange = { onEvent(LoginEvent.OnUpdatePassword(it)) },
+            onValueChange = { state.password = it },
             label = { Text(stringResource(Res.string.password)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         )
 
+        Text(model.loginError.orEmpty(), color = Color.Red)
+
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { onEvent(LoginEvent.Login) },
-            enabled = model.isLoginEnabled,
+            onClick = { onEvent(LoginEvent.Login(state.loginRequest())) },
+            enabled = state.isLoginEnabled,
             content = { Text(stringResource(Res.string.login)) }
         )
 
-        OutlinedButton(
+        ElevatedButton(
             modifier = Modifier.fillMaxWidth(),
             content = { Text("Sign up") },
             onClick = { onEvent(LoginEvent.SignUp) }
         )
-
-        Text(model.loginError.orEmpty(), color = Color.Red)
     }
 }
 
@@ -100,6 +112,7 @@ private fun LoginContent(
 fun LoginScreenPreview() {
     LoginContent(
         onEvent = {},
+        state = LoginState(),
         model = LoginComponent.Model()
     )
 }
