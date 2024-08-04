@@ -7,7 +7,8 @@ internal interface SignUpComponent {
     val model: Value<Model>
 
     data class Model(
-        val isLoading: Boolean = false
+        val isLoading: Boolean = false,
+        val usernameError: String? = null
     )
 
     fun handleEvent(event: SignUpEvent)

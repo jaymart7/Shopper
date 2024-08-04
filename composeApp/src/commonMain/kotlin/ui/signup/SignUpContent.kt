@@ -66,6 +66,8 @@ private fun SignUpContent(
                 onValueChange = { state.username = it },
                 singleLine = true,
                 label = { Text("Username") },
+                supportingText = model.usernameError?.let { { Text(it) } },
+                isError = model.usernameError != null,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
 
