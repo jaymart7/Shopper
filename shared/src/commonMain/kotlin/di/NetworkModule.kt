@@ -22,6 +22,11 @@ import model.response.ApiError
 import org.koin.dsl.module
 import repository.SessionRepository
 
+/**
+ * Config for remote and local host
+ */
+private const val isLocal = true
+
 val networkModule = module {
     single<HttpClient> {
         createHttpClient(
@@ -63,9 +68,14 @@ private fun createHttpClient(
 
         defaultRequest {
             url {
-                protocol = URLProtocol.HTTP
-                port = 8080
-                host = platform.host
+                if (isLocal) {
+                    protocol = URLProtocol.HTTP
+                    host = platform.localHost
+                    port = 8080
+                } else {
+                    protocol = URLProtocol.HTTPS
+                    host = platform.remoteHost
+                }
             }
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer ${sessionRepository.getToken().orEmpty()}")

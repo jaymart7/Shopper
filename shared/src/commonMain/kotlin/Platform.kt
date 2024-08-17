@@ -2,7 +2,8 @@ import org.koin.core.module.Module
 
 interface Platform {
     val name: String
-    val host: String
+    val remoteHost: String
+    val localHost: String
 }
 
 expect fun platformModule(): Module

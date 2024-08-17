@@ -29,7 +29,8 @@ actual fun platformModule(): Module {
         single<Platform> {
             object : Platform {
                 override val name: String = "Java ${System.getProperty("java.version")}"
-                override val host: String = "localhost"
+                override val localHost: String = "localhost"
+                override val remoteHost: String = "shopperserver-heec.onrender.com"
             }
         }
     }
