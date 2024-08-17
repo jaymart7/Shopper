@@ -12,7 +12,7 @@ plugins {
 
 kotlin {
     js(IR) {
-        useEsModules() // Enables ES2015 modules
+        moduleName = "composeApp"
         browser {
             commonWebpackConfig {
                 outputFileName = "webApp.js"
@@ -62,6 +62,10 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.ui.tooling.preview)
+        }
+        jsMain.dependencies {
+            implementation(npm("path-browserify", "^1.0.1"))
+            implementation(npm("os-browserify", "^0.3.0"))
         }
     }
 }

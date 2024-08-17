@@ -25,7 +25,7 @@ import repository.SessionRepository
 /**
  * Config for remote and local host
  */
-private const val isLocal = true
+private const val isLocal = false
 
 val networkModule = module {
     single<HttpClient> {
