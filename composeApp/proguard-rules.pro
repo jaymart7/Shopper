@@ -1,1 +1,0 @@
--dontwarn org.gradle.api.Plugin

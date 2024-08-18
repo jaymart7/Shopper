@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.sqlDelight)
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
@@ -28,22 +30,30 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
+            api(compose.material3)
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.materialIconsExtended)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+
             implementation(libs.bundles.ktor.common)
             implementation(libs.kotlinx.coroutines.core)
 
             api(libs.koin.core)
-            api(libs.koin.compose.multiplatform)
-            api(libs.kotlin.serialization)
+            implementation(libs.koin.compose.multiplatform)
+            implementation(libs.kotlin.serialization)
 
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines.extensions)
 
             api(libs.decompose.decompose)
-            api(libs.decompose.extensions.compose)
-            implementation(libs.essenty.lifecycle.coroutines)
+            api(libs.essenty.lifecycle.coroutines)
+            implementation(libs.decompose.extensions.compose)
 
-            api(libs.coil.compose)
-            api(libs.coil.compose.core)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.compose.core)
             implementation(libs.coil.network.ktor)
             implementation(libs.coil.mp)
         }

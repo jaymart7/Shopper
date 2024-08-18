@@ -79,10 +79,12 @@ private fun createHttpClient(
             }
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer ${sessionRepository.getToken().orEmpty()}")
+
         }
 
         install(ContentNegotiation) {
             json(Json)
         }
+
     }
 }
