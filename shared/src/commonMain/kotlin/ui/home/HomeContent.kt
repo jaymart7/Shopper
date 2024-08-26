@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import common.NetworkImage
 import model.Product
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import util.ViewState
 import util.getRandomImageUrl
 
@@ -180,21 +179,4 @@ private fun ProductItem(
             )
         }
     }
-}
-
-@Composable
-@Preview
-fun HomeScreenPreview() {
-    HomeContent(
-        onEvent = {},
-        model = HomeComponent.Model(
-            productsState = ViewState.Success(
-                listOf(
-                    Product(1, "Product 1"),
-                    Product(2, "Product 2"),
-                    Product(3, "Product 3")
-                )
-            )
-        )
-    )
 }

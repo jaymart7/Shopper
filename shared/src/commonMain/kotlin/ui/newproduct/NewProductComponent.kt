@@ -1,6 +1,7 @@
 package ui.newproduct
 
 import com.arkivanov.decompose.value.Value
+import model.ProductRequest
 
 interface NewProductComponent {
     val model: Value<Model>
@@ -13,5 +14,5 @@ interface NewProductComponent {
 }
 
 sealed class NewProductEvent {
-    data class Add(val title: String) : NewProductEvent()
+    data class Add(val request: ProductRequest) : NewProductEvent()
 }

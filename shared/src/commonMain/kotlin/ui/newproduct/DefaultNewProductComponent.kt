@@ -7,6 +7,8 @@ import com.arkivanov.decompose.value.update
 import component.componentCoroutineScope
 import kotlinx.coroutines.launch
 import model.Product
+import model.ProductRequest
+import model.toProduct
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.ProductRepository
@@ -27,20 +29,17 @@ internal class DefaultNewProductComponent(
 
     override fun handleEvent(event: NewProductEvent) {
         when (event) {
-            is NewProductEvent.Add -> add(event.title)
+            is NewProductEvent.Add -> add(event.request)
         }
     }
 
-    private fun add(title: String) {
+    private fun add(request: ProductRequest) {
         scope.launch {
             state.update { it.copy(isLoading = true) }
             try {
-                val productId = productRepository.addProduct(title)
+                val productId = productRepository.addProduct(request)
                 onAdded(
-                    Product(
-                        id = productId,
-                        title = title
-                    )
+                    request.toProduct(productId)
                 )
             } catch (e: Exception) {
                 onShowSnackbar(e.message.orEmpty())

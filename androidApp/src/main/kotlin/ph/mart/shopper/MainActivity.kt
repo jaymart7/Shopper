@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.arkivanov.decompose.defaultComponentContext
 import di.createRootComponent
-import ui.home.HomeScreenPreview
 import ui.login.LoginScreenPreview
 import ui.root.RootContent
 
@@ -31,16 +30,6 @@ fun LoginPreview() {
     MaterialTheme {
         Surface {
             LoginScreenPreview()
-        }
-    }
-}
-
-@Preview
-@Composable
-fun HomePreview() {
-    MaterialTheme {
-        Surface {
-            HomeScreenPreview()
         }
     }
 }

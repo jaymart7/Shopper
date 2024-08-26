@@ -1,5 +1,7 @@
 package common
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -8,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,4 +55,20 @@ internal fun PasswordTextField(
         label = label,
         keyboardOptions = keyboardOptions
     )
+}
+
+@Composable
+fun clickable(
+    onClick: () -> Unit
+): MutableInteractionSource {
+    return remember { MutableInteractionSource() }
+        .also { interactionSource ->
+            LaunchedEffect(interactionSource) {
+                interactionSource.interactions.collect {
+                    if (it is PressInteraction.Release) {
+                        onClick()
+                    }
+                }
+            }
+        }
 }

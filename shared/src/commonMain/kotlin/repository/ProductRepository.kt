@@ -8,9 +8,9 @@ import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import model.Product
-import model.request.ProductRequest
+import model.ProductRequest
 
-interface ProductRepository {
+internal interface ProductRepository {
 
     suspend fun getProduct(): List<Product>
 
@@ -18,10 +18,10 @@ interface ProductRepository {
 
     suspend fun deleteProduct(id: Int)
 
-    suspend fun addProduct(title: String): Int
+    suspend fun addProduct(productRequest: ProductRequest): Int
 }
 
-class ProductRepositoryImpl(
+internal class ProductRepositoryImpl(
     private val httpClient: HttpClient
 ) : ProductRepository {
 
@@ -37,7 +37,12 @@ class ProductRepositoryImpl(
 
     override suspend fun updateProduct(product: Product) {
         httpClient.put("$URL_PRODUCTS/${product.id}") {
-            setBody(ProductRequest(product.title))
+            setBody(
+                ProductRequest(
+                    product.title,
+                    product.dateTime
+                )
+            )
         }
     }
 
@@ -45,9 +50,9 @@ class ProductRepositoryImpl(
         httpClient.delete("$URL_PRODUCTS/$id")
     }
 
-    override suspend fun addProduct(title: String): Int {
+    override suspend fun addProduct(productRequest: ProductRequest): Int {
         val response = httpClient.post(URL_PRODUCTS) {
-            setBody(ProductRequest(title))
+            setBody(productRequest)
         }
         return response.body<Int>()
     }

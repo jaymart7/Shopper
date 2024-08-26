@@ -44,6 +44,7 @@ kotlin {
             api(libs.koin.core)
             implementation(libs.koin.compose.multiplatform)
             implementation(libs.kotlin.serialization)
+            implementation(libs.kotlinx.datetime)
 
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines.extensions)

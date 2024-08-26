@@ -1,5 +1,6 @@
 package ui.productdetails
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import common.DatePickerDialog
 import common.LoadingDialog
+import common.TimePickerDialog
+import common.clickable
 
 @Composable
 internal fun ProductDetailsContent(
@@ -52,13 +56,36 @@ private fun ProductDetailsContent(
                 onEvent(ProductDetailsEvent.OnDelete)
             }
         )
+
+        state.isTimePickerDialogShown -> {
+            TimePickerDialog(
+                selectedTime = state.time,
+                onConfirm = {
+                    state.time = it
+                    state.isTimePickerDialogShown = false
+                },
+                onDismiss = { state.isTimePickerDialogShown = false }
+            )
+        }
+
+        state.isDatePickerDialogShown -> {
+            DatePickerDialog(
+                selectedDate = state.date,
+                onDismiss = { state.isDatePickerDialogShown = false },
+                onConfirm = {
+                    state.date = it
+                    state.isDatePickerDialogShown = false
+                }
+            )
+        }
     }
 
     Column(modifier = modifier) {
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             TextField(
                 modifier = Modifier.fillMaxWidth(),
@@ -67,6 +94,26 @@ private fun ProductDetailsContent(
                 singleLine = true,
                 label = { Text("Product") },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            )
+
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                interactionSource = clickable { state.isDatePickerDialogShown = true },
+                value = state.dateString,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Date") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            )
+
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                interactionSource = clickable { state.isTimePickerDialogShown = true },
+                value = state.timeString,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Time") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
         }
 
