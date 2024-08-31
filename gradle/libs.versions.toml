@@ -11,7 +11,7 @@ ktor = "3.0.0-beta-2"
 coroutines = "1.8.1"
 slf4j = "2.0.13"
 sqlDelight = "2.0.2"
-decompose = "3.0.0"
+decompose = "3.1.0"
 essenty = "2.1.0"
 coil = "3.0.0-alpha09"
 
@@ -30,6 +30,10 @@ coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.re
 decompose-decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-extensions-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 essenty-lifecycle-coroutines = { module = "com.arkivanov.essenty:lifecycle-coroutines", version.ref = "essenty" }
+essenty-lifecycle = { group = "com.arkivanov.essenty", name = "lifecycle", version.ref = "essenty" }
+essenty-stateKeeper = { group = "com.arkivanov.essenty", name = "state-keeper", version.ref = "essenty" }
+essenty-instanceKeeper = { group = "com.arkivanov.essenty", name = "instance-keeper", version.ref = "essenty" }
+essenty-backHandler = { group = "com.arkivanov.essenty", name = "back-handler", version.ref = "essenty" }
 
 kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
