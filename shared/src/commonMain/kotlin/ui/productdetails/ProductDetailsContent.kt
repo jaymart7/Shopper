@@ -1,5 +1,6 @@
 package ui.productdetails
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +23,6 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import common.DatePickerDialog
 import common.LoadingDialog
 import common.TimePickerDialog
-import common.clickable
 
 @Composable
 internal fun ProductDetailsContent(
@@ -97,21 +97,29 @@ private fun ProductDetailsContent(
             )
 
             TextField(
-                modifier = Modifier.fillMaxWidth(),
-                interactionSource = clickable { state.isDatePickerDialogShown = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        state.isDatePickerDialogShown = true
+                    },
                 value = state.dateString,
                 onValueChange = {},
                 readOnly = true,
+                enabled = false,
                 label = { Text("Date") },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
 
             TextField(
-                modifier = Modifier.fillMaxWidth(),
-                interactionSource = clickable { state.isTimePickerDialogShown = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        state.isTimePickerDialogShown = true
+                    },
                 value = state.timeString,
                 onValueChange = {},
                 readOnly = true,
+                enabled = false,
                 label = { Text("Time") },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
