@@ -1,6 +1,5 @@
 package ui.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -75,7 +74,6 @@ private fun HomeContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProductContent(
     lazyListState: LazyGridState,
@@ -113,7 +111,7 @@ fun ProductContent(
                         key = { it.id },
                         itemContent = {
                             ProductItem(
-                                modifier = Modifier.animateItemPlacement(),
+                                modifier = Modifier.animateItem(),
                                 onClick = { onItemClick(it) },
                                 product = it
                             )

@@ -15,6 +15,11 @@ kotlin {
         browser()
     }
 
+    // TODO: Remove once `compose-plugin` has been updated.
+    configurations.configureEach {
+        exclude("androidx.window.core", "window-core")
+    }
+
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -71,6 +76,11 @@ kotlin {
                 implementation(libs.coil.compose.core)
                 implementation(libs.coil.network.ktor)
                 implementation(libs.coil.mp)
+
+                // TODO: Remove once `compose-plugin` has been updated.
+                implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.0.0-alpha01")
+                implementation("org.jetbrains.compose.material3.adaptive:adaptive-layout:1.0.0-alpha01")
+                implementation("org.jetbrains.compose.material3.adaptive:adaptive-navigation:1.0.0-alpha01")
             }
         }
         val androidMain by getting {
@@ -78,6 +88,9 @@ kotlin {
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.sqldelight.android.driver)
                 implementation(libs.slf4j)
+
+                // TODO: Remove once `compose-plugin` has been updated.
+                implementation("androidx.window:window-core:1.3.0")
             }
         }
         val jvmMain by getting {

@@ -10,6 +10,7 @@ kotlin {
         browser {
             commonWebpackConfig {
                 outputFileName = "webApp.js"
+                devServer?.port = 8081
             }
         }
         binaries.executable()
