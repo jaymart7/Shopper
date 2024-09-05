@@ -21,3 +21,6 @@ captures
 /composeApp/release/baselineProfiles/1/composeApp-release.dm
 /composeApp/release/output-metadata.json
 /kotlin-js-store/
+/node_modules/*
+/package.json
+/package-lock.json
